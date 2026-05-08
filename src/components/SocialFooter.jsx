@@ -1,30 +1,9 @@
-import { useEffect, useState } from "react";
-
-function SocialFooter({ theme, animatedColorsRef }) {
+function SocialFooter({ theme }) {
   const items = [
     { href: "#", label: "Facebook" },
     { href: "#", label: "LinkedIn" },
     { href: "#", label: "Instagram" },
   ];
-
-  const [linkColor, setLinkColor] = useState(theme?.text || "#111");
-
-  useEffect(() => {
-    let raf = 0;
-    let mounted = true;
-    function tick() {
-      const ac = animatedColorsRef?.current;
-      if (ac && mounted) {
-        setLinkColor(`rgba(${ac.base.r}, ${ac.base.g}, ${ac.base.b}, 1)`);
-      }
-      raf = requestAnimationFrame(tick);
-    }
-    raf = requestAnimationFrame(tick);
-    return () => {
-      mounted = false;
-      cancelAnimationFrame(raf);
-    };
-  }, [animatedColorsRef, theme]);
 
   return (
     <footer className="fixed bottom-6 right-6 z-30" aria-label="Social links">
@@ -35,7 +14,7 @@ function SocialFooter({ theme, animatedColorsRef }) {
               href={item.href}
               className="inline-flex items-center justify-center rounded text-sm"
               aria-label={item.label}
-              style={{ color: linkColor }}
+              style={{ color: theme?.text || "#111" }}
             >
               {item.label}
             </a>

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-function SiteNav({ theme, animatedColorsRef }) {
+function SiteNav({ theme, activeThemeKey, animatedColorsRef }) {
   const [activeBg, setActiveBg] = useState(theme?.buttonBg);
 
   useEffect(() => {
@@ -28,10 +28,10 @@ function SiteNav({ theme, animatedColorsRef }) {
   }, [animatedColorsRef, theme]);
 
   const links = [
-    { href: "#accueil", label: "Accueil", active: true },
-    { href: "#projets", label: "Projets" },
-    { href: "#apropos", label: "À propos" },
-    { href: "#contact", label: "Contact" },
+    { href: "#accueil", label: "Accueil", themeKey: "home" },
+    { href: "#projets", label: "Projets", themeKey: "projets" },
+    { href: "#apropos", label: "À propos", themeKey: "apropos" },
+    { href: "#contact", label: "Contact", themeKey: "contact" },
   ];
 
   function scrollToSection(event, href) {
@@ -70,6 +70,7 @@ function SiteNav({ theme, animatedColorsRef }) {
     >
       <ul className="m-0 flex list-none flex-col gap-2 p-0">
         {links.map((link) => {
+          const isActive = link.themeKey === activeThemeKey;
           const activeClass = "";
           const textClass = "";
           return (
@@ -79,7 +80,7 @@ function SiteNav({ theme, animatedColorsRef }) {
                 onClick={(event) => scrollToSection(event, link.href)}
                 className={`inline-block rounded-md px-2.5 py-1.5 no-underline transition-colors duration-300 ${activeClass} ${textClass}`}
                 style={
-                  link.active
+                  isActive
                     ? {
                         backgroundColor: activeBg,
                         color: theme?.buttonText,
@@ -87,7 +88,7 @@ function SiteNav({ theme, animatedColorsRef }) {
                     : { color: theme?.text }
                 }
                 onMouseEnter={(event) => {
-                  if (!link.active) {
+                  if (!isActive) {
                     event.currentTarget.style.color = theme?.buttonText;
                     if (animatedColorsRef?.current)
                       event.currentTarget.style.backgroundColor = `rgba(${animatedColorsRef.current.hover.r}, ${animatedColorsRef.current.hover.g}, ${animatedColorsRef.current.hover.b}, 1)`;
@@ -97,7 +98,7 @@ function SiteNav({ theme, animatedColorsRef }) {
                   }
                 }}
                 onMouseLeave={(event) => {
-                  if (!link.active) {
+                  if (!isActive) {
                     event.currentTarget.style.color = theme?.text;
                     event.currentTarget.style.backgroundColor = "transparent";
                   }

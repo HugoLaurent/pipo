@@ -13,7 +13,6 @@ function ContentSection({
   title,
   subtitle,
   children,
-  theme,
   sectionRef,
   dataThemeKey,
 }) {
@@ -22,7 +21,7 @@ function ContentSection({
       id={id}
       ref={sectionRef}
       data-theme-key={dataThemeKey}
-      className="flex min-h-screen items-center justify-center px-4 py-20 scroll-mt-16"
+      className="snap-section flex h-[100dvh] items-center justify-center px-4"
       style={{ backgroundColor: "transparent" }}
     >
       <div

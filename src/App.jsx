@@ -4,10 +4,6 @@ import HomeHero from "./components/HomeHero";
 import SiteNav from "./components/SiteNav";
 import SocialFooter from "./components/SocialFooter";
 import { useEffect, useMemo, useRef, useState } from "react";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
-
-gsap.registerPlugin(ScrollTrigger);
 
 const THEMES = {
   home: {
@@ -78,6 +74,25 @@ function hexToRgbTriplet(hex) {
   return `${r}, ${g}, ${b}`;
 }
 
+function hexToRgbObject(hex) {
+  const value = hex.replace("#", "");
+  const normalized = value.length === 3 ? value.replace(/./g, "$&$&") : value;
+  const intValue = Number.parseInt(normalized, 16);
+  return {
+    r: (intValue >> 16) & 255,
+    g: (intValue >> 8) & 255,
+    b: intValue & 255,
+  };
+}
+
+function interpolateRgb(from, to, progress) {
+  return {
+    r: Math.round(from.r + (to.r - from.r) * progress),
+    g: Math.round(from.g + (to.g - from.g) * progress),
+    b: Math.round(from.b + (to.b - from.b) * progress),
+  };
+}
+
 function App() {
   const arrowDots = [
     { x: 50, y: 52, r: 3 },
@@ -121,112 +136,143 @@ function App() {
   );
 
   useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        const visibleEntries = entries
-          .filter((entry) => entry.isIntersecting)
-          .sort((a, b) => b.intersectionRatio - a.intersectionRatio);
+    let frame = 0;
+    let snapTimer = 0;
+    let releaseSnapTimer = 0;
+    let isSnapping = false;
 
-        const nextThemeKey = visibleEntries[0]?.target?.dataset?.themeKey;
-        if (nextThemeKey && THEMES[nextThemeKey]) {
-          setActiveThemeKey(nextThemeKey);
+    function getSections() {
+      return Object.entries(sectionRefs.current)
+        .map(([key, element]) => {
+          if (!element || !THEMES[key]) return null;
+
+          return {
+            key,
+            element,
+            center: element.offsetTop + element.offsetHeight / 2,
+          };
+        })
+        .filter(Boolean)
+        .sort((a, b) => a.center - b.center);
+    }
+
+    function getClosestSection() {
+      const viewportCenter = window.scrollY + window.innerHeight / 2;
+      let closestKey = "home";
+      let closestSection = null;
+      let closestDistance = Number.POSITIVE_INFINITY;
+      const sections = getSections();
+
+      sections.forEach((section) => {
+        const distance = Math.abs(section.center - viewportCenter);
+
+        if (distance < closestDistance) {
+          closestDistance = distance;
+          closestKey = section.key;
+          closestSection = section;
         }
-      },
-      {
-        threshold: [0.35, 0.5, 0.65, 0.8],
-        rootMargin: "-20% 0px -20% 0px",
-      },
-    );
+      });
 
-    Object.values(sectionRefs.current).forEach((element) => {
-      if (element) {
-        observer.observe(element);
+      return { closestKey, closestSection, sections, viewportCenter };
+    }
+
+    function updateActiveTheme() {
+      const { closestKey, sections, viewportCenter } = getClosestSection();
+
+      const nextSectionIndex = sections.findIndex(
+        (section) => section.center >= viewportCenter,
+      );
+      const fromSection =
+        nextSectionIndex === -1
+          ? sections[sections.length - 1]
+          : sections[Math.max(0, nextSectionIndex - 1)];
+      const toSection =
+        nextSectionIndex === -1
+          ? sections[sections.length - 1]
+          : sections[nextSectionIndex];
+
+      if (fromSection && toSection) {
+        const span = Math.max(1, toSection.center - fromSection.center);
+        const progress =
+          fromSection.key === toSection.key
+            ? 0
+            : Math.min(
+                1,
+                Math.max(0, (viewportCenter - fromSection.center) / span),
+              );
+        const fromTheme = THEMES[fromSection.key];
+        const toTheme = THEMES[toSection.key];
+
+        animatedColorsRef.current.base = interpolateRgb(
+          hexToRgbObject(fromTheme.dotBase),
+          hexToRgbObject(toTheme.dotBase),
+          progress,
+        );
+        animatedColorsRef.current.hover = interpolateRgb(
+          hexToRgbObject(fromTheme.dotHover),
+          hexToRgbObject(toTheme.dotHover),
+          progress,
+        );
+        animatedColorsRef.current.glow = interpolateRgb(
+          hexToRgbObject(fromTheme.glowColor),
+          hexToRgbObject(toTheme.glowColor),
+          progress,
+        );
       }
-    });
 
-    return () => observer.disconnect();
-  }, []);
+      setActiveThemeKey((currentKey) =>
+        closestKey !== currentKey ? closestKey : currentKey,
+      );
+    }
 
-  // GSAP ScrollTrigger: animate canvas colors smoothly when scrolling between sections
-  useEffect(() => {
-    // cleanup any existing ScrollTriggers
-    ScrollTrigger.getAll().forEach((t) => t.kill());
+    function snapToClosestSection() {
+      if (isSnapping) return;
 
-    Object.keys(sectionRefs.current).forEach((key) => {
-      const el = sectionRefs.current[key];
-      if (!el) return;
-      const theme = THEMES[key];
-      if (!theme) return;
+      const { closestSection } = getClosestSection();
+      if (!closestSection) return;
 
-      const baseTarget = (() => {
-        const v = theme.dotBase.replace("#", "");
-        const n = v.length === 3 ? v.replace(/./g, "$&$&") : v;
-        const int = Number.parseInt(n, 16);
-        return { r: (int >> 16) & 255, g: (int >> 8) & 255, b: int & 255 };
-      })();
+      const distanceToSection = Math.abs(
+        window.scrollY - closestSection.element.offsetTop,
+      );
+      if (distanceToSection < 4) return;
 
-      const hoverTarget = (() => {
-        const v = theme.dotHover.replace("#", "");
-        const n = v.length === 3 ? v.replace(/./g, "$&$&") : v;
-        const int = Number.parseInt(n, 16);
-        return { r: (int >> 16) & 255, g: (int >> 8) & 255, b: int & 255 };
-      })();
-
-      const glowTarget = (() => {
-        const v = theme.glowColor.replace("#", "");
-        const n = v.length === 3 ? v.replace(/./g, "$&$&") : v;
-        const int = Number.parseInt(n, 16);
-        return { r: (int >> 16) & 255, g: (int >> 8) & 255, b: int & 255 };
-      })();
-
-      gsap.to(animatedColorsRef.current.base, {
-        r: baseTarget.r,
-        g: baseTarget.g,
-        b: baseTarget.b,
-        ease: "none",
-        scrollTrigger: {
-          trigger: el,
-          start: "top center",
-          end: "bottom center",
-          scrub: true,
-        },
+      isSnapping = true;
+      closestSection.element.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
       });
 
-      gsap.to(animatedColorsRef.current.hover, {
-        r: hoverTarget.r,
-        g: hoverTarget.g,
-        b: hoverTarget.b,
-        ease: "none",
-        scrollTrigger: {
-          trigger: el,
-          start: "top center",
-          end: "bottom center",
-          scrub: true,
-        },
-      });
+      clearTimeout(releaseSnapTimer);
+      releaseSnapTimer = setTimeout(() => {
+        isSnapping = false;
+      }, 700);
+    }
 
-      gsap.to(animatedColorsRef.current.glow, {
-        r: glowTarget.r,
-        g: glowTarget.g,
-        b: glowTarget.b,
-        ease: "none",
-        scrollTrigger: {
-          trigger: el,
-          start: "top center",
-          end: "bottom center",
-          scrub: true,
-        },
-      });
-    });
+    function requestUpdate() {
+      cancelAnimationFrame(frame);
+      frame = requestAnimationFrame(updateActiveTheme);
+
+      if (!isSnapping) {
+        clearTimeout(snapTimer);
+        snapTimer = setTimeout(snapToClosestSection, 140);
+      }
+    }
+
+    updateActiveTheme();
+    window.addEventListener("scroll", requestUpdate, { passive: true });
+    window.addEventListener("resize", requestUpdate);
 
     return () => {
-      ScrollTrigger.getAll().forEach((t) => t.kill());
+      cancelAnimationFrame(frame);
+      clearTimeout(snapTimer);
+      clearTimeout(releaseSnapTimer);
+      window.removeEventListener("scroll", requestUpdate);
+      window.removeEventListener("resize", requestUpdate);
     };
   }, []);
 
   return (
     <Background
-      pageBg={activeTheme.pageBg}
       baseColor={activeTheme.dotBase}
       glowColor={activeTheme.glowColor}
       hoverColor={activeTheme.dotHover}
@@ -236,7 +282,11 @@ function App() {
         className="relative px-4 transition-colors duration-700"
         style={themeVars}
       >
-        <SiteNav theme={activeTheme} animatedColorsRef={animatedColorsRef} />
+        <SiteNav
+          theme={activeTheme}
+          activeThemeKey={activeThemeKey}
+          animatedColorsRef={animatedColorsRef}
+        />
 
         <section
           id="accueil"
@@ -244,11 +294,11 @@ function App() {
             sectionRefs.current.home = element;
           }}
           data-theme-key="home"
-          className="relative h-screen flex items-center justify-center scroll-mt-16"
+          className="snap-section relative flex h-[100dvh] items-center justify-center"
         >
           <HomeHero
             arrowDots={arrowDots}
-            theme={activeTheme}
+            theme={THEMES.home}
             animatedColorsRef={animatedColorsRef}
           />
         </section>
@@ -259,8 +309,6 @@ function App() {
             sectionRefs.current.projets = element;
           }}
           dataThemeKey="projets"
-          theme={THEMES.projets}
-          animatedColorsRef={animatedColorsRef}
           title="Projets"
           subtitle="Sélection de travaux et collaborations"
         >
@@ -273,8 +321,6 @@ function App() {
             sectionRefs.current.apropos = element;
           }}
           dataThemeKey="apropos"
-          theme={THEMES.apropos}
-          animatedColorsRef={animatedColorsRef}
           title="À propos"
           subtitle="Compositeur et univers personnel"
         >
@@ -287,18 +333,13 @@ function App() {
             sectionRefs.current.contact = element;
           }}
           dataThemeKey="contact"
-          theme={THEMES.contact}
-          animatedColorsRef={animatedColorsRef}
           title="Contact"
           subtitle="On travaille ensemble ?"
         >
           Écris-moi pour une collaboration, une écoute ou un devis.
         </ContentSection>
 
-        <SocialFooter
-          theme={activeTheme}
-          animatedColorsRef={animatedColorsRef}
-        />
+        <SocialFooter theme={THEMES.home} />
       </main>
     </Background>
   );

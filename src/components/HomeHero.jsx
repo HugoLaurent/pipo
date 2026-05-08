@@ -11,6 +11,11 @@ function hexToRgba(hex, alpha) {
   return `rgba(${r}, ${g}, ${b}, ${alpha})`;
 }
 
+function getReadableTextColor({ r, g, b }) {
+  const luminance = (0.2126 * r + 0.7152 * g + 0.0722 * b) / 255;
+  return luminance > 0.55 ? "#111111" : "#ffffff";
+}
+
 function HomeHero({ arrowDots, theme, animatedColorsRef }) {
   const anchorRef = useRef(null);
   const cardRef = useRef(null);
@@ -19,8 +24,11 @@ function HomeHero({ arrowDots, theme, animatedColorsRef }) {
   const [baseRgba, setBaseRgba] = useState(
     hexToRgba(theme?.titleBg || "#111111", 1),
   );
+  const [titleTextColor, setTitleTextColor] = useState(
+    theme?.titleText || "#fff",
+  );
   const [hoverFill, setHoverFill] = useState(
-    hexToRgba(theme?.dotHover || "#C9DDF2", 0.9),
+    hexToRgba(theme?.dotBase || "#111111", 0.9),
   );
   const [glowRgba, setGlowRgba] = useState(
     hexToRgba(theme?.glowColor || "#ffffff", 0.6),
@@ -115,16 +123,16 @@ function HomeHero({ arrowDots, theme, animatedColorsRef }) {
       const ac = animatedColorsRef?.current;
       if (ac) {
         const b = `rgba(${ac.base.r}, ${ac.base.g}, ${ac.base.b}, 1)`;
-        const hf = `rgba(${ac.hover.r}, ${ac.hover.g}, ${ac.hover.b}, 0.9)`;
-        const g = `rgba(${ac.glow.r}, ${ac.glow.g}, ${ac.glow.b}, 0.6)`;
         if (mounted) {
           setBaseRgba(b);
-          setHoverFill(hf);
-          setGlowRgba(g);
+          setTitleTextColor(getReadableTextColor(ac.base));
+          setHoverFill(hexToRgba(theme?.dotBase || "#111111", 0.9));
+          setGlowRgba(hexToRgba(theme?.glowColor || "#ffffff", 0.6));
         }
       } else if (mounted) {
         setBaseRgba(hexToRgba(theme?.titleBg || "#111111", 1));
-        setHoverFill(hexToRgba(theme?.dotHover || "#C9DDF2", 0.9));
+        setTitleTextColor(theme?.titleText || "#fff");
+        setHoverFill(hexToRgba(theme?.dotBase || "#111111", 0.9));
         setGlowRgba(hexToRgba(theme?.glowColor || "#ffffff", 0.6));
       }
       raf = requestAnimationFrame(tick);
@@ -182,7 +190,7 @@ function HomeHero({ arrowDots, theme, animatedColorsRef }) {
             className={`inline-block rounded-lg px-4 py-2 text-2xl font-medium leading-none`}
             style={{
               backgroundColor: baseRgba,
-              color: theme?.titleText || "#fff",
+              color: titleTextColor,
             }}
           >
             Vincent Gelée
@@ -202,7 +210,7 @@ function HomeHero({ arrowDots, theme, animatedColorsRef }) {
           className={`inline-block rounded-lg px-4 py-2 text-2xl font-medium leading-none`}
           style={{
             backgroundColor: baseRgba,
-            color: theme?.titleText || "#fff",
+            color: titleTextColor,
           }}
         >
           Vincent Gelée
