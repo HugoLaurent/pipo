@@ -1,4 +1,32 @@
-function SiteNav({ theme }) {
+import { useEffect, useState } from "react";
+
+function SiteNav({ theme, animatedColorsRef }) {
+  const [activeBg, setActiveBg] = useState(theme?.buttonBg);
+
+  useEffect(() => {
+    let mounted = true;
+    let raf = 0;
+
+    function tick() {
+      const ac = animatedColorsRef?.current;
+      const nextActiveBg = ac
+        ? `rgba(${ac.base.r}, ${ac.base.g}, ${ac.base.b}, 1)`
+        : theme?.buttonBg;
+
+      if (mounted) {
+        setActiveBg(nextActiveBg);
+      }
+
+      raf = requestAnimationFrame(tick);
+    }
+
+    raf = requestAnimationFrame(tick);
+    return () => {
+      mounted = false;
+      cancelAnimationFrame(raf);
+    };
+  }, [animatedColorsRef, theme]);
+
   const links = [
     { href: "#accueil", label: "Accueil", active: true },
     { href: "#projets", label: "Projets" },
@@ -25,18 +53,11 @@ function SiteNav({ theme }) {
     }
 
     function animate(currentTime) {
-      if (!startTime) {
-        startTime = currentTime;
-      }
-
+      if (!startTime) startTime = currentTime;
       const progress = Math.min((currentTime - startTime) / duration, 1);
       const easedProgress = easeInOutCubic(progress);
-
       window.scrollTo(0, startY + distance * easedProgress);
-
-      if (progress < 1) {
-        requestAnimationFrame(animate);
-      }
+      if (progress < 1) requestAnimationFrame(animate);
     }
 
     requestAnimationFrame(animate);
@@ -48,36 +69,45 @@ function SiteNav({ theme }) {
       aria-label="Site Navigation"
     >
       <ul className="m-0 flex list-none flex-col gap-2 p-0">
-        {links.map((link) => (
-          <li key={link.href}>
-            <a
-              href={link.href}
-              onClick={(event) => scrollToSection(event, link.href)}
-              className="inline-block rounded-md px-2.5 py-1.5 no-underline transition-colors duration-300"
-              style={{
-                color: link.active ? theme?.buttonText || "#fff" : theme?.text || "#111",
-                backgroundColor: link.active
-                  ? theme?.buttonBg || "rgba(0,0,0,0.88)"
-                  : "transparent",
-              }}
-              onMouseEnter={(event) => {
-                if (!link.active) {
-                  event.currentTarget.style.backgroundColor =
-                    theme?.buttonHoverBg || "rgba(0,0,0,0.12)";
-                  event.currentTarget.style.color = theme?.buttonText || "#fff";
+        {links.map((link) => {
+          const activeClass = "";
+          const textClass = "";
+          return (
+            <li key={link.href}>
+              <a
+                href={link.href}
+                onClick={(event) => scrollToSection(event, link.href)}
+                className={`inline-block rounded-md px-2.5 py-1.5 no-underline transition-colors duration-300 ${activeClass} ${textClass}`}
+                style={
+                  link.active
+                    ? {
+                        backgroundColor: activeBg,
+                        color: theme?.buttonText,
+                      }
+                    : { color: theme?.text }
                 }
-              }}
-              onMouseLeave={(event) => {
-                if (!link.active) {
-                  event.currentTarget.style.backgroundColor = "transparent";
-                  event.currentTarget.style.color = theme?.text || "#111";
-                }
-              }}
-            >
-              {link.label}
-            </a>
-          </li>
-        ))}
+                onMouseEnter={(event) => {
+                  if (!link.active) {
+                    event.currentTarget.style.color = theme?.buttonText;
+                    if (animatedColorsRef?.current)
+                      event.currentTarget.style.backgroundColor = `rgba(${animatedColorsRef.current.hover.r}, ${animatedColorsRef.current.hover.g}, ${animatedColorsRef.current.hover.b}, 1)`;
+                    else
+                      event.currentTarget.style.backgroundColor =
+                        theme?.buttonHoverBg;
+                  }
+                }}
+                onMouseLeave={(event) => {
+                  if (!link.active) {
+                    event.currentTarget.style.color = theme?.text;
+                    event.currentTarget.style.backgroundColor = "transparent";
+                  }
+                }}
+              >
+                {link.label}
+              </a>
+            </li>
+          );
+        })}
       </ul>
     </nav>
   );

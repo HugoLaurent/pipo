@@ -8,7 +8,15 @@ function hexToRgba(hex, alpha) {
   return `rgba(${r}, ${g}, ${b}, ${alpha})`;
 }
 
-function ContentSection({ id, title, subtitle, children, theme, sectionRef, dataThemeKey }) {
+function ContentSection({
+  id,
+  title,
+  subtitle,
+  children,
+  theme,
+  sectionRef,
+  dataThemeKey,
+}) {
   return (
     <section
       id={id}
@@ -21,7 +29,10 @@ function ContentSection({ id, title, subtitle, children, theme, sectionRef, data
         className="max-w-xl rounded-3xl p-8 shadow-lg ring-1 ring-black/5 backdrop-blur-sm"
         style={{ backgroundColor: "rgba(255,255,255,0.92)", color: "#111" }}
       >
-        <p className="text-sm uppercase tracking-[0.25em]" style={{ color: "#111" }}>
+        <p
+          className="text-sm uppercase tracking-[0.25em]"
+          style={{ color: "#111" }}
+        >
           {title}
         </p>
         <h2 className="mt-3 text-3xl font-semibold" style={{ color: "#111" }}>

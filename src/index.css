@@ -1,1 +1,133 @@
 @import "tailwindcss";
+
+/* Theme color utility classes (pastels and accents) */
+/* Home (Noir doux / Bleu pastel) */
+.home-title-bg {
+  background-color: #111111;
+}
+
+.home-title-text {
+  color: #FFFFFF;
+}
+
+.home-button-bg {
+  background-color: #111111;
+}
+
+.home-button-text {
+  color: #FFFFFF;
+}
+
+.home-button-hover-bg {
+  background-color: #2A2A2A;
+}
+
+.home-dot-hover {
+  color: #C9DDF2;
+}
+
+/* Projets (Bleu principal / Bleu pastel) */
+.projets-title-bg {
+  background-color: #C9DDF2;
+}
+
+.projets-title-text {
+  color: #0F1D33;
+}
+
+.projets-button-bg {
+  background-color: #C9DDF2;
+}
+
+.projets-button-text {
+  color: #0F1D33;
+}
+
+.projets-button-hover-bg {
+  background-color: #5A88FF;
+}
+
+.projets-dot-hover {
+  color: #C9DDF2;
+}
+
+/* À propos (Menthe) */
+.apropos-title-bg {
+  background-color: #D9F2E6;
+}
+
+.apropos-title-text {
+  color: #103226;
+}
+
+.apropos-button-bg {
+  background-color: #D9F2E6;
+}
+
+.apropos-button-text {
+  color: #103226;
+}
+
+.apropos-button-hover-bg {
+  background-color: #52B38B;
+}
+
+.apropos-dot-hover {
+  color: #D9F2E6;
+}
+
+/* Contact (Rose) */
+.contact-title-bg {
+  background-color: #F3D9DE;
+}
+
+.contact-title-text {
+  color: #34111F;
+}
+
+.contact-button-bg {
+  background-color: #F3D9DE;
+}
+
+.contact-button-text {
+  color: #34111F;
+}
+
+.contact-button-hover-bg {
+  background-color: #EF84AC;
+}
+
+.contact-dot-hover {
+  color: #F3D9DE;
+}
+
+/* Utility: apply button text color */
+.btn-text-inherit {
+  color: inherit;
+}
+
+/* Theme body/text color utilities */
+.home-text {
+  color: #111111;
+}
+
+.projets-text {
+  color: #0F1D33;
+}
+
+.apropos-text {
+  color: #103226;
+}
+
+.contact-text {
+  color: #34111F;
+}
+
+/* Footer initial: no hover effects — only first letter colored via theme class */
+
+/* Global smoothing: make color/background transitions more gentle site-wide */
+.transition-colors {
+  transition-property: color, background-color, border-color !important;
+  transition-duration: 420ms !important;
+  transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1) !important;
+}

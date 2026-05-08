@@ -22,6 +22,7 @@ function DotPattern({
   proximity = 120,
   glowIntensity = 1,
   waveSpeed = 0.5,
+  animatedColorsRef,
 }) {
   const canvasRef = useRef(null);
   const containerRef = useRef(null);
@@ -34,6 +35,29 @@ function DotPattern({
   const baseRgb = useMemo(() => hexToRgb(baseColor), [baseColor]);
   const glowRgb = useMemo(() => hexToRgb(glowColor), [glowColor]);
   const hoverRgb = useMemo(() => hexToRgb(hoverColor), [hoverColor]);
+  // Smoothed color refs to interpolate when theme props change
+  const currentBaseRef = useRef(baseRgb);
+  const targetBaseRef = useRef(baseRgb);
+  const currentHoverRef = useRef(hoverRgb);
+  const targetHoverRef = useRef(hoverRgb);
+  const currentGlowRef = useRef(glowRgb);
+  const targetGlowRef = useRef(glowRgb);
+
+  useEffect(() => {
+    targetBaseRef.current = hexToRgb(baseColor);
+  }, [baseColor]);
+
+  useEffect(() => {
+    targetHoverRef.current = hexToRgb(hoverColor);
+  }, [hoverColor]);
+
+  useEffect(() => {
+    targetGlowRef.current = hexToRgb(glowColor);
+  }, [glowColor]);
+
+  function lerp(a, b, t) {
+    return a + (b - a) * t;
+  }
 
   const getArrowMask = useCallback((dot, width, height) => {
     const centerX = width / 2;
@@ -104,6 +128,53 @@ function DotPattern({
     const width = canvas.width / dpr;
     const height = canvas.height / dpr;
 
+    // Smooth current colors a bit each frame for a softer transition
+    // increase blend for slower, smoother transitions between theme colors
+    const blend = 0.12; // smaller -> slower, smoother transitions
+
+    // If an external animatedColorsRef is present (GSAP-controlled), use it as targets
+    if (animatedColorsRef && animatedColorsRef.current) {
+      const tBase = animatedColorsRef.current.base;
+      const tHover = animatedColorsRef.current.hover;
+      const tGlow = animatedColorsRef.current.glow;
+      if (tBase) targetBaseRef.current = tBase;
+      if (tHover) targetHoverRef.current = tHover;
+      if (tGlow) targetGlowRef.current = tGlow;
+    }
+    currentBaseRef.current = {
+      r: Math.round(
+        lerp(currentBaseRef.current.r, targetBaseRef.current.r, blend),
+      ),
+      g: Math.round(
+        lerp(currentBaseRef.current.g, targetBaseRef.current.g, blend),
+      ),
+      b: Math.round(
+        lerp(currentBaseRef.current.b, targetBaseRef.current.b, blend),
+      ),
+    };
+    currentHoverRef.current = {
+      r: Math.round(
+        lerp(currentHoverRef.current.r, targetHoverRef.current.r, blend),
+      ),
+      g: Math.round(
+        lerp(currentHoverRef.current.g, targetHoverRef.current.g, blend),
+      ),
+      b: Math.round(
+        lerp(currentHoverRef.current.b, targetHoverRef.current.b, blend),
+      ),
+    };
+    currentGlowRef.current = {
+      r: Math.round(
+        lerp(currentGlowRef.current.r, targetGlowRef.current.r, blend),
+      ),
+      g: Math.round(
+        lerp(currentGlowRef.current.g, targetGlowRef.current.g, blend),
+      ),
+      b: Math.round(
+        lerp(currentGlowRef.current.b, targetGlowRef.current.b, blend),
+      ),
+    };
+
     for (const dot of dotsRef.current) {
       const dx = dot.x - mx;
       const dy = dot.y - my;
@@ -116,9 +187,10 @@ function DotPattern({
 
       let opacity = waveOpacity;
       let scale = waveScale;
-      let r = baseRgb.r;
-      let g = baseRgb.g;
-      let b = baseRgb.b;
+      // use smoothed current base/hover colors
+      let r = currentBaseRef.current.r;
+      let g = currentBaseRef.current.g;
+      let b = currentBaseRef.current.b;
       let glow = 0;
       const arrowMask = getArrowMask(dot, width, height);
       const reveal = Math.min(1, 0.35 + scrollProgress * 0.65);
@@ -131,9 +203,18 @@ function DotPattern({
         const easedT = t * t * (3 - 2 * t); // smoothstep
 
         // Interpolate color towards hover color (dark blue)
-        r = Math.round(baseRgb.r + (hoverRgb.r - baseRgb.r) * easedT);
-        g = Math.round(baseRgb.g + (hoverRgb.g - baseRgb.g) * easedT);
-        b = Math.round(baseRgb.b + (hoverRgb.b - baseRgb.b) * easedT);
+        r = Math.round(
+          currentBaseRef.current.r +
+            (currentHoverRef.current.r - currentBaseRef.current.r) * easedT,
+        );
+        g = Math.round(
+          currentBaseRef.current.g +
+            (currentHoverRef.current.g - currentBaseRef.current.g) * easedT,
+        );
+        b = Math.round(
+          currentBaseRef.current.b +
+            (currentHoverRef.current.b - currentBaseRef.current.b) * easedT,
+        );
 
         opacity = Math.min(1, waveOpacity + easedT * 0.7);
         scale = waveScale + easedT * 0.8;
@@ -155,15 +236,15 @@ function DotPattern({
         );
         gradient.addColorStop(
           0,
-          `rgba(${glowRgb.r}, ${glowRgb.g}, ${glowRgb.b}, ${glow * 0.4 * baseReveal})`,
+          `rgba(${currentGlowRef.current.r}, ${currentGlowRef.current.g}, ${currentGlowRef.current.b}, ${glow * 0.4 * baseReveal})`,
         );
         gradient.addColorStop(
           0.5,
-          `rgba(${glowRgb.r}, ${glowRgb.g}, ${glowRgb.b}, ${glow * 0.1 * baseReveal})`,
+          `rgba(${currentGlowRef.current.r}, ${currentGlowRef.current.g}, ${currentGlowRef.current.b}, ${glow * 0.1 * baseReveal})`,
         );
         gradient.addColorStop(
           1,
-          `rgba(${glowRgb.r}, ${glowRgb.g}, ${glowRgb.b}, 0)`,
+          `rgba(${currentGlowRef.current.r}, ${currentGlowRef.current.g}, ${currentGlowRef.current.b}, 0)`,
         );
         ctx.beginPath();
         ctx.arc(dot.x, dot.y, radius * 4, 0, Math.PI * 2);

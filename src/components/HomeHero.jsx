@@ -1,5 +1,5 @@
 import gsap from "gsap";
-import { useLayoutEffect, useRef } from "react";
+import { useLayoutEffect, useRef, useEffect, useState } from "react";
 
 function hexToRgba(hex, alpha) {
   const value = hex.replace("#", "");
@@ -11,10 +11,20 @@ function hexToRgba(hex, alpha) {
   return `rgba(${r}, ${g}, ${b}, ${alpha})`;
 }
 
-function HomeHero({ arrowDots, theme }) {
+function HomeHero({ arrowDots, theme, animatedColorsRef }) {
   const anchorRef = useRef(null);
   const cardRef = useRef(null);
   const arrowRef = useRef(null);
+
+  const [baseRgba, setBaseRgba] = useState(
+    hexToRgba(theme?.titleBg || "#111111", 1),
+  );
+  const [hoverFill, setHoverFill] = useState(
+    hexToRgba(theme?.dotHover || "#C9DDF2", 0.9),
+  );
+  const [glowRgba, setGlowRgba] = useState(
+    hexToRgba(theme?.glowColor || "#ffffff", 0.6),
+  );
 
   const palette = [
     { name: "Noir doux", value: "#1A1A1A" },
@@ -97,6 +107,36 @@ function HomeHero({ arrowDots, theme }) {
     };
   }, []);
 
+  useEffect(() => {
+    let mounted = true;
+    let raf = 0;
+
+    function tick() {
+      const ac = animatedColorsRef?.current;
+      if (ac) {
+        const b = `rgba(${ac.base.r}, ${ac.base.g}, ${ac.base.b}, 1)`;
+        const hf = `rgba(${ac.hover.r}, ${ac.hover.g}, ${ac.hover.b}, 0.9)`;
+        const g = `rgba(${ac.glow.r}, ${ac.glow.g}, ${ac.glow.b}, 0.6)`;
+        if (mounted) {
+          setBaseRgba(b);
+          setHoverFill(hf);
+          setGlowRgba(g);
+        }
+      } else if (mounted) {
+        setBaseRgba(hexToRgba(theme?.titleBg || "#111111", 1));
+        setHoverFill(hexToRgba(theme?.dotHover || "#C9DDF2", 0.9));
+        setGlowRgba(hexToRgba(theme?.glowColor || "#ffffff", 0.6));
+      }
+      raf = requestAnimationFrame(tick);
+    }
+
+    raf = requestAnimationFrame(tick);
+    return () => {
+      mounted = false;
+      cancelAnimationFrame(raf);
+    };
+  }, [animatedColorsRef, theme]);
+
   useLayoutEffect(() => {
     function updateArrowVisibility() {
       if (!arrowRef.current) return;
@@ -139,12 +179,15 @@ function HomeHero({ arrowDots, theme }) {
           aria-hidden="true"
         >
           <h1
-            className="inline-block rounded-lg px-4 py-2 text-2xl font-medium leading-none"
-            style={{ backgroundColor: theme?.titleBg, color: theme?.titleText }}
+            className={`inline-block rounded-lg px-4 py-2 text-2xl font-medium leading-none`}
+            style={{
+              backgroundColor: baseRgba,
+              color: theme?.titleText || "#fff",
+            }}
           >
             Vincent Gelée
           </h1>
-          <span className="mt-0.5 mr-1 block text-sm leading-none text-zinc-900/90">
+          <span className="mt-0.5 mr-1  text-sm leading-none text-black">
             Compositeur
           </span>
         </div>
@@ -156,14 +199,16 @@ function HomeHero({ arrowDots, theme }) {
         style={{ top: 0, left: 0 }}
       >
         <h1
-          className="inline-block rounded-lg px-4 py-2 text-2xl font-medium leading-none"
-          style={{ backgroundColor: theme?.titleBg, color: theme?.titleText }}
+          className={`inline-block rounded-lg px-4 py-2 text-2xl font-medium leading-none`}
+          style={{
+            backgroundColor: baseRgba,
+            color: theme?.titleText || "#fff",
+          }}
         >
           Vincent Gelée
         </h1>
         <span
-          className="mt-0.5 mr-1 block text-sm leading-none"
-          style={{ color: theme?.text || theme?.titleText }}
+          className={`mt-0.5 mr-1 block text-sm leading-none ${theme?.slug}-text`}
         >
           Compositeur
         </span>
@@ -172,7 +217,7 @@ function HomeHero({ arrowDots, theme }) {
       <div className="absolute left-1/2 top-[calc(50%+92px)] -translate-x-1/2">
         <div
           className="grid grid-cols-4 gap-3 rounded-2xl p-3 shadow-md ring-1 ring-black/5 backdrop-blur-sm"
-          style={{ backgroundColor: hexToRgba(theme?.surfaceBg || "#ffffff", 0.52) }}
+          style={{ backgroundColor: glowRgba }}
         >
           {palette.map((color) => (
             <div key={color.name} className="flex flex-col items-center gap-2">
@@ -202,7 +247,7 @@ function HomeHero({ arrowDots, theme }) {
             cx={dot.x}
             cy={dot.y}
             r={dot.r}
-            fill="rgba(24, 24, 27, 0.88)"
+            fill={hoverFill}
             style={{ filter: "drop-shadow(0 0 10px rgba(0,0,0,0.12))" }}
           />
         ))}
