@@ -30,7 +30,7 @@ function HomeHero({ arrowDots, theme, animatedColorsRef }) {
   const [hoverFill, setHoverFill] = useState(
     hexToRgba(theme?.dotBase || "#111111", 0.9),
   );
-  const [glowRgba, setGlowRgba] = useState(
+  /* const [glowRgba, setGlowRgba] = useState(
     hexToRgba(theme?.glowColor || "#ffffff", 0.6),
   );
 
@@ -39,7 +39,7 @@ function HomeHero({ arrowDots, theme, animatedColorsRef }) {
     { name: "Bleu pastel", value: "#C9DDF2" },
     { name: "Menthe", value: "#D9F2E6" },
     { name: "Rose poudré", value: "#F3D9DE" },
-  ];
+  ]; */
 
   useLayoutEffect(() => {
     let isInitialRender = true;
@@ -127,13 +127,13 @@ function HomeHero({ arrowDots, theme, animatedColorsRef }) {
           setBaseRgba(b);
           setTitleTextColor(getReadableTextColor(ac.base));
           setHoverFill(hexToRgba(theme?.dotBase || "#111111", 0.9));
-          setGlowRgba(hexToRgba(theme?.glowColor || "#ffffff", 0.6));
+          /* setGlowRgba(hexToRgba(theme?.glowColor || "#ffffff", 0.6)); */
         }
       } else if (mounted) {
         setBaseRgba(hexToRgba(theme?.titleBg || "#111111", 1));
         setTitleTextColor(theme?.titleText || "#fff");
         setHoverFill(hexToRgba(theme?.dotBase || "#111111", 0.9));
-        setGlowRgba(hexToRgba(theme?.glowColor || "#ffffff", 0.6));
+        /* setGlowRgba(hexToRgba(theme?.glowColor || "#ffffff", 0.6)); */
       }
       raf = requestAnimationFrame(tick);
     }
@@ -223,7 +223,7 @@ function HomeHero({ arrowDots, theme, animatedColorsRef }) {
       </div>
 
       <div className="absolute left-1/2 top-[calc(50%+92px)] -translate-x-1/2">
-        <div
+        {/*    <div
           className="grid grid-cols-4 gap-3 rounded-2xl p-3 shadow-md ring-1 ring-black/5 backdrop-blur-sm"
           style={{ backgroundColor: glowRgba }}
         >
@@ -240,7 +240,7 @@ function HomeHero({ arrowDots, theme, animatedColorsRef }) {
               </span>
             </div>
           ))}
-        </div>
+        </div>*/}
       </div>
 
       <svg
