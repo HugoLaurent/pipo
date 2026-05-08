@@ -1,4 +1,4 @@
-function SiteNav() {
+function SiteNav({ theme }) {
   const links = [
     { href: "#accueil", label: "Accueil", active: true },
     { href: "#projets", label: "Projets" },
@@ -16,7 +16,7 @@ function SiteNav() {
     const targetY = target.getBoundingClientRect().top + window.scrollY;
     const distance = targetY - startY;
     const duration = 1100;
-    const startTime = performance.now();
+    let startTime = 0;
 
     function easeInOutCubic(value) {
       return value < 0.5
@@ -25,6 +25,10 @@ function SiteNav() {
     }
 
     function animate(currentTime) {
+      if (!startTime) {
+        startTime = currentTime;
+      }
+
       const progress = Math.min((currentTime - startTime) / duration, 1);
       const easedProgress = easeInOutCubic(progress);
 
@@ -49,11 +53,26 @@ function SiteNav() {
             <a
               href={link.href}
               onClick={(event) => scrollToSection(event, link.href)}
-              className={
-                link.active
-                  ? "inline-block rounded-md bg-zinc-900 px-2.5 py-1.5 text-zinc-50 no-underline transition-colors hover:bg-zinc-800"
-                  : "inline-block rounded-md px-2.5 py-1.5 text-zinc-900 no-underline transition-colors hover:bg-zinc-100"
-              }
+              className="inline-block rounded-md px-2.5 py-1.5 no-underline transition-colors duration-300"
+              style={{
+                color: link.active ? theme?.buttonText || "#fff" : theme?.text || "#111",
+                backgroundColor: link.active
+                  ? theme?.buttonBg || "rgba(0,0,0,0.88)"
+                  : "transparent",
+              }}
+              onMouseEnter={(event) => {
+                if (!link.active) {
+                  event.currentTarget.style.backgroundColor =
+                    theme?.buttonHoverBg || "rgba(0,0,0,0.12)";
+                  event.currentTarget.style.color = theme?.buttonText || "#fff";
+                }
+              }}
+              onMouseLeave={(event) => {
+                if (!link.active) {
+                  event.currentTarget.style.backgroundColor = "transparent";
+                  event.currentTarget.style.color = theme?.text || "#111";
+                }
+              }}
             >
               {link.label}
             </a>

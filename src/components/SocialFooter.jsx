@@ -1,4 +1,4 @@
-function SocialFooter() {
+function SocialFooter({ theme }) {
   const items = [
     { href: "#", label: "Facebook" },
     { href: "#", label: "LinkedIn" },
@@ -12,7 +12,17 @@ function SocialFooter() {
           <li key={item.label}>
             <a
               href={item.href}
-              className="inline-flex h-8 items-center justify-center rounded px-3 text-sm text-zinc-900 hover:bg-zinc-100"
+              className="inline-flex h-8 items-center justify-center rounded px-3 text-sm transition-colors duration-500"
+              style={{
+                color: theme?.buttonText,
+                backgroundColor: "rgba(0, 0, 0, 0.88)",
+              }}
+              onMouseEnter={(event) => {
+                event.currentTarget.style.backgroundColor = "rgba(0, 0, 0, 0.14)";
+              }}
+              onMouseLeave={(event) => {
+                event.currentTarget.style.backgroundColor = "rgba(0, 0, 0, 0.88)";
+              }}
               aria-label={item.label}
             >
               {item.label}
@@ -24,6 +34,7 @@ function SocialFooter() {
             href="#"
             aria-label="Favicon"
             className="inline-flex h-8 w-8 items-center justify-center overflow-hidden rounded"
+            style={{ backgroundColor: "rgba(0, 0, 0, 0.88)" }}
           >
             <img
               src="/favicon.png"

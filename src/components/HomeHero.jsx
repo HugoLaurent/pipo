@@ -1,7 +1,17 @@
 import gsap from "gsap";
 import { useLayoutEffect, useRef } from "react";
 
-function HomeHero({ arrowDots }) {
+function hexToRgba(hex, alpha) {
+  const value = hex.replace("#", "");
+  const normalized = value.length === 3 ? value.replace(/./g, "$&$&") : value;
+  const intValue = Number.parseInt(normalized, 16);
+  const r = (intValue >> 16) & 255;
+  const g = (intValue >> 8) & 255;
+  const b = intValue & 255;
+  return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+}
+
+function HomeHero({ arrowDots, theme }) {
   const anchorRef = useRef(null);
   const cardRef = useRef(null);
   const arrowRef = useRef(null);
@@ -125,10 +135,13 @@ function HomeHero({ arrowDots }) {
     <>
       <div ref={anchorRef} className="relative">
         <div
-          className="invisible pointer-events-none select-none rounded-3xl bg-white/75 px-6 py-5 text-right shadow-lg ring-1 ring-black/5 backdrop-blur-sm"
+          className="invisible pointer-events-none select-none rounded-3xl px-6 py-5 text-right shadow-lg ring-1 ring-black/5 backdrop-blur-sm"
           aria-hidden="true"
         >
-          <h1 className="inline-block rounded-lg bg-zinc-900 px-4 py-2 text-2xl font-medium leading-none text-white">
+          <h1
+            className="inline-block rounded-lg px-4 py-2 text-2xl font-medium leading-none"
+            style={{ backgroundColor: theme?.titleBg, color: theme?.titleText }}
+          >
             Vincent Gelée
           </h1>
           <span className="mt-0.5 mr-1 block text-sm leading-none text-zinc-900/90">
@@ -139,19 +152,28 @@ function HomeHero({ arrowDots }) {
 
       <div
         ref={cardRef}
-        className="fixed z-40 rounded-3xl bg-white/75 px-6 py-5 text-right shadow-lg ring-1 ring-black/5 backdrop-blur-sm"
+        className="fixed z-40 rounded-3xl px-6 py-5 text-right shadow-lg ring-1 ring-black/5 backdrop-blur-sm transition-colors duration-700"
         style={{ top: 0, left: 0 }}
       >
-        <h1 className="inline-block rounded-lg bg-zinc-900 px-4 py-2 text-2xl font-medium leading-none text-white">
+        <h1
+          className="inline-block rounded-lg px-4 py-2 text-2xl font-medium leading-none"
+          style={{ backgroundColor: theme?.titleBg, color: theme?.titleText }}
+        >
           Vincent Gelée
         </h1>
-        <span className="mt-0.5 mr-1 block text-sm leading-none text-zinc-900/90">
+        <span
+          className="mt-0.5 mr-1 block text-sm leading-none"
+          style={{ color: theme?.text || theme?.titleText }}
+        >
           Compositeur
         </span>
       </div>
 
       <div className="absolute left-1/2 top-[calc(50%+92px)] -translate-x-1/2">
-        <div className="grid grid-cols-4 gap-3 rounded-2xl bg-white/55 p-3 shadow-md ring-1 ring-black/5 backdrop-blur-sm">
+        <div
+          className="grid grid-cols-4 gap-3 rounded-2xl p-3 shadow-md ring-1 ring-black/5 backdrop-blur-sm"
+          style={{ backgroundColor: hexToRgba(theme?.surfaceBg || "#ffffff", 0.52) }}
+        >
           {palette.map((color) => (
             <div key={color.name} className="flex flex-col items-center gap-2">
               <div
