@@ -72,14 +72,24 @@ const THEMES = {
   },
 };
 
-const PROJECTS = Array.from({ length: 8 }, (_, index) => ({
-  title: `Projet ${index + 1}`,
-  youtubeEmbedUrl:
-    "https://www.youtube.com/embed/gQ5N6neDmZI?si=6Am02UggXtPoGJJ6",
-  thumbnailUrl: "https://img.youtube.com/vi/gQ5N6neDmZI/hqdefault.jpg",
-  description:
-    "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer vitae sem vel neque posuere luctus.",
-}));
+const PROJECT_VIDEOS = [
+  { id: "fy33YRfNlOE", si: "bYjExvvX4cVFWg06" },
+  { id: "MHHk6trU_FI", si: "7vtYc3sIHOolBwPK" },
+  { id: "mthHcXEWrtE", si: "fmmBEFmwXkJ7KIrZ" },
+  { id: "eIqDVxeTBdg", si: "lCUzgck8JhvpEqA2" },
+];
+
+const PROJECTS = Array.from({ length: 8 }, (_, index) => {
+  const video = PROJECT_VIDEOS[index % PROJECT_VIDEOS.length];
+
+  return {
+    title: `Projet ${index + 1}`,
+    youtubeEmbedUrl: `https://www.youtube.com/embed/${video.id}?si=${video.si}`,
+    thumbnailUrl: `https://img.youtube.com/vi/${video.id}/hqdefault.jpg`,
+    description:
+      "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer vitae sem vel neque posuere luctus.",
+  };
+});
 
 function hexToRgbTriplet(hex) {
   const value = hex.replace("#", "");
