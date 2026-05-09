@@ -559,10 +559,50 @@ function App() {
             sectionRefs.current.apropos = element;
           }}
           dataThemeKey="apropos"
+          contentClassName="w-full max-w-4xl"
           title="À propos"
           subtitle="Compositeur et univers personnel"
         >
-          Musique originale, images sonores et identité simple.
+          <div className="grid gap-8 md:grid-cols-[minmax(0,1.2fr)_minmax(220px,0.8fr)]">
+            <div className="space-y-5 text-zinc-800">
+              <p>
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer
+                vitae sem vel neque posuere luctus. Sed non magna at augue
+                facilisis tincidunt vitae et lectus.
+              </p>
+              <p>
+                Praesent euismod, mi non fermentum faucibus, lorem justo
+                suscipit sapien, vitae cursus libero arcu in neque. Suspendisse
+                potenti. Donec accumsan, ipsum in luctus imperdiet, erat sem
+                porttitor nunc, non blandit nibh nibh sit amet erat.
+              </p>
+              <p>
+                Curabitur tempor augue at lacus pretium, ac pharetra lorem
+                gravida. Aliquam erat volutpat. Vestibulum ante ipsum primis in
+                faucibus orci luctus et ultrices posuere cubilia curae.
+              </p>
+            </div>
+
+            <div className="grid gap-3 text-sm text-zinc-800">
+              {[
+                ["Approche", "Lorem ipsum dolor sit amet", "#111111"],
+                ["Formats", "Film, scène, installation", "#C9DDF2"],
+                ["Univers", "Acoustique, électronique, silence", "#D9F2E6"],
+                ["Lieu", "Paris et collaborations à distance", "#F3D9DE"],
+              ].map(([label, value, accentColor]) => (
+                <div
+                  key={label}
+                  className="rounded-lg border-l-4 bg-white/70 p-4 shadow-sm ring-1 ring-black/10 backdrop-blur-sm"
+                  style={{ borderLeftColor: accentColor }}
+                >
+                  <p className="text-xs uppercase tracking-[0.2em] text-zinc-500">
+                    {label}
+                  </p>
+                  <p className="mt-2 font-medium text-zinc-950">{value}</p>
+                </div>
+              ))}
+            </div>
+          </div>
         </ContentSection>
 
         <ContentSection
