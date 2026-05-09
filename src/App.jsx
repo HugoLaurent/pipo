@@ -17,57 +17,57 @@ const THEMES = {
   home: {
     slug: "home",
     pageBg: "#FFFFFF",
-    surfaceBg: "#F6F6F6",
-    titleBg: "#111111",
+    surfaceBg: "#F4E4BA",
+    titleBg: "#13293D",
     titleText: "#FFFFFF",
-    text: "#111111",
-    buttonBg: "#111111",
-    buttonHoverBg: "#2A2A2A",
+    text: "#13293D",
+    buttonBg: "#13293D",
+    buttonHoverBg: "#A26769",
     buttonText: "#FFFFFF",
-    dotBase: "#111111",
-    dotHover: "#C9DDF2",
+    dotBase: "#13293D",
+    dotHover: "#95B8D1",
     glowColor: "#FFFFFF",
   },
   projets: {
     slug: "projets",
-    pageBg: "#EEF5FF",
-    surfaceBg: "#DCEBFF",
-    titleBg: "#C9DDF2",
-    titleText: "#0F1D33",
-    text: "#0F1D33",
-    buttonBg: "#C9DDF2",
-    buttonHoverBg: "#5A88FF",
-    buttonText: "#0F1D33",
-    dotBase: "#C9DDF2",
-    dotHover: "#C9DDF2",
+    pageBg: "#FFFFFF",
+    surfaceBg: "#95B8D1",
+    titleBg: "#95B8D1",
+    titleText: "#13293D",
+    text: "#13293D",
+    buttonBg: "#95B8D1",
+    buttonHoverBg: "#13293D",
+    buttonText: "#13293D",
+    dotBase: "#95B8D1",
+    dotHover: "#95B8D1",
     glowColor: "#FFFFFF",
   },
   apropos: {
     slug: "apropos",
-    pageBg: "#EEF9F1",
-    surfaceBg: "#D7F1E0",
-    titleBg: "#D9F2E6",
-    titleText: "#103226",
-    text: "#103226",
-    buttonBg: "#D9F2E6",
-    buttonHoverBg: "#52B38B",
-    buttonText: "#103226",
-    dotBase: "#D9F2E6",
-    dotHover: "#D9F2E6",
+    pageBg: "#FFFFFF",
+    surfaceBg: "#F4E4BA",
+    titleBg: "#F4E4BA",
+    titleText: "#13293D",
+    text: "#13293D",
+    buttonBg: "#F4E4BA",
+    buttonHoverBg: "#95B8D1",
+    buttonText: "#13293D",
+    dotBase: "#F4E4BA",
+    dotHover: "#F4E4BA",
     glowColor: "#FFFFFF",
   },
   contact: {
     slug: "contact",
-    pageBg: "#FFF0F5",
-    surfaceBg: "#FDDCE7",
-    titleBg: "#F3D9DE",
-    titleText: "#34111F",
-    text: "#34111F",
-    buttonBg: "#F3D9DE",
-    buttonHoverBg: "#EF84AC",
-    buttonText: "#34111F",
-    dotBase: "#F3D9DE",
-    dotHover: "#F3D9DE",
+    pageBg: "#FFFFFF",
+    surfaceBg: "#A26769",
+    titleBg: "#A26769",
+    titleText: "#FFFFFF",
+    text: "#13293D",
+    buttonBg: "#A26769",
+    buttonHoverBg: "#13293D",
+    buttonText: "#FFFFFF",
+    dotBase: "#A26769",
+    dotHover: "#A26769",
     glowColor: "#FFFFFF",
   },
 };
@@ -153,8 +153,8 @@ function App() {
   const projectModalPanelRef = useRef(null);
   const isProjectModalClosingRef = useRef(false);
   const animatedColorsRef = useRef({
-    base: { r: 17, g: 17, b: 17 },
-    hover: { r: 201, g: 221, b: 242 },
+    base: { r: 19, g: 41, b: 61 },
+    hover: { r: 149, g: 184, b: 209 },
     glow: { r: 255, g: 255, b: 255 },
   });
 
@@ -506,10 +506,10 @@ function App() {
                     alt=""
                   />
                   <div className="p-4">
-                    <h3 className="text-base font-semibold leading-tight text-zinc-950">
+                    <h3 className="text-base font-semibold leading-tight text-[#13293D]">
                       {project.title}
                     </h3>
-                    <p className="mt-2 text-sm leading-6 text-zinc-700">
+                    <p className="mt-2 text-sm leading-6 text-[#13293D]/80">
                       {project.description}
                     </p>
                   </div>
@@ -520,7 +520,7 @@ function App() {
             <div className="mt-5 flex items-center justify-between gap-4">
               <button
                 type="button"
-                className="rounded-md bg-white/90 px-3 py-2 text-sm font-medium text-zinc-950 shadow-sm ring-1 ring-black/10 transition-colors hover:bg-white disabled:cursor-not-allowed disabled:opacity-40"
+                className="rounded-md bg-white/90 px-3 py-2 text-sm font-medium text-[#13293D] shadow-sm ring-1 ring-black/10 transition-colors hover:bg-white disabled:cursor-not-allowed disabled:opacity-40"
                 disabled={projectsPage === 0}
                 onClick={() =>
                   setProjectsPage((currentPage) => Math.max(0, currentPage - 1))
@@ -540,7 +540,7 @@ function App() {
                     aria-label={`Page ${index + 1}`}
                     aria-current={projectsPage === index ? "page" : undefined}
                     className={`h-2.5 w-2.5 rounded-full transition-colors ${
-                      projectsPage === index ? "bg-zinc-950" : "bg-zinc-300"
+                      projectsPage === index ? "bg-[#13293D]" : "bg-[#95B8D1]"
                     }`}
                     onClick={() => setProjectsPage(index)}
                   />
@@ -549,7 +549,7 @@ function App() {
 
               <button
                 type="button"
-                className="rounded-md bg-white/90 px-3 py-2 text-sm font-medium text-zinc-950 shadow-sm ring-1 ring-black/10 transition-colors hover:bg-white disabled:cursor-not-allowed disabled:opacity-40"
+                className="rounded-md bg-white/90 px-3 py-2 text-sm font-medium text-[#13293D] shadow-sm ring-1 ring-black/10 transition-colors hover:bg-white disabled:cursor-not-allowed disabled:opacity-40"
                 disabled={projectsPage === projectsPageCount - 1}
                 onClick={() =>
                   setProjectsPage((currentPage) =>
@@ -574,7 +574,7 @@ function App() {
           subtitle="Compositeur et univers personnel"
         >
           <div className="grid gap-8 md:grid-cols-[minmax(0,1.2fr)_minmax(220px,0.8fr)]">
-            <div className="space-y-5 text-zinc-800">
+            <div className="space-y-5 text-[#13293D]">
               <p>
                 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer
                 vitae sem vel neque posuere luctus. Sed non magna at augue
@@ -593,22 +593,22 @@ function App() {
               </p>
             </div>
 
-            <div className="grid gap-3 text-sm text-zinc-800">
+            <div className="grid gap-3 text-sm text-[#13293D]">
               {[
-                ["Approche", "Lorem ipsum dolor sit amet", "#111111"],
-                ["Formats", "Film, scène, installation", "#C9DDF2"],
-                ["Univers", "Acoustique, électronique, silence", "#D9F2E6"],
-                ["Lieu", "Paris et collaborations à distance", "#F3D9DE"],
+                ["Approche", "Lorem ipsum dolor sit amet", "#13293D"],
+                ["Formats", "Film, scène, installation", "#95B8D1"],
+                ["Univers", "Acoustique, électronique, silence", "#F4E4BA"],
+                ["Lieu", "Paris et collaborations à distance", "#A26769"],
               ].map(([label, value, accentColor]) => (
                 <div
                   key={label}
                   className="rounded-lg border-l-4 bg-white/70 p-4 shadow-sm ring-1 ring-black/10 backdrop-blur-sm"
                   style={{ borderLeftColor: accentColor }}
                 >
-                  <p className="text-xs uppercase tracking-[0.2em] text-zinc-500">
+                  <p className="text-xs uppercase tracking-[0.2em] text-[#13293D]/60">
                     {label}
                   </p>
-                  <p className="mt-2 font-medium text-zinc-950">{value}</p>
+                  <p className="mt-2 font-medium text-[#13293D]">{value}</p>
                 </div>
               ))}
             </div>
@@ -656,9 +656,9 @@ function App() {
               />
             </div>
 
-            <aside className="flex flex-col justify-between gap-8 p-6 text-zinc-950 md:p-8">
+            <aside className="flex flex-col justify-between gap-8 p-6 text-[#13293D] md:p-8">
               <div>
-                <p className="text-sm uppercase tracking-[0.25em] text-zinc-500">
+                <p className="text-sm uppercase tracking-[0.25em] text-[#13293D]/60">
                   Projet
                 </p>
                 <h2
@@ -667,14 +667,14 @@ function App() {
                 >
                   {selectedProject.title}
                 </h2>
-                <p className="mt-5 text-base leading-7 text-zinc-700">
+                <p className="mt-5 text-base leading-7 text-[#13293D]/80">
                   {selectedProject.description}
                 </p>
               </div>
 
               <button
                 type="button"
-                className="self-start rounded-md bg-zinc-950 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-zinc-700"
+                className="self-start rounded-md bg-[#13293D] px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-[#A26769]"
                 onClick={closeProjectModal}
               >
                 Fermer

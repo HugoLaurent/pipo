@@ -21,17 +21,20 @@ function ContentSection({
         <div className={`${contentClassName} max-h-full overflow-visible`}>
           <p
             className="text-sm uppercase tracking-[0.25em]"
-            style={{ color: "#111" }}
+            style={{ color: "#13293D" }}
           >
             {title}
           </p>
           <h2
             className="mt-3 text-3xl font-semibold"
-            style={{ color: "#111" }}
+            style={{ color: "#13293D" }}
           >
             {subtitle}
           </h2>
-          <div className="mt-4 text-base leading-7" style={{ color: "#111" }}>
+          <div
+            className="mt-4 text-base leading-7"
+            style={{ color: "#13293D" }}
+          >
             {children}
           </div>
         </div>

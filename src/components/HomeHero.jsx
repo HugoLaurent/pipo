@@ -13,7 +13,7 @@ function hexToRgba(hex, alpha) {
 
 function getReadableTextColor({ r, g, b }) {
   const luminance = (0.2126 * r + 0.7152 * g + 0.0722 * b) / 255;
-  return luminance > 0.55 ? "#111111" : "#ffffff";
+  return luminance > 0.55 ? "#13293D" : "#ffffff";
 }
 
 function HomeHero({ arrowDots, theme, animatedColorsRef }) {
@@ -22,23 +22,23 @@ function HomeHero({ arrowDots, theme, animatedColorsRef }) {
   const arrowRef = useRef(null);
 
   const [baseRgba, setBaseRgba] = useState(
-    hexToRgba(theme?.titleBg || "#111111", 1),
+    hexToRgba(theme?.titleBg || "#13293D", 1),
   );
   const [titleTextColor, setTitleTextColor] = useState(
     theme?.titleText || "#fff",
   );
   const [hoverFill, setHoverFill] = useState(
-    hexToRgba(theme?.dotBase || "#111111", 0.9),
+    hexToRgba(theme?.dotBase || "#13293D", 0.9),
   );
   /* const [glowRgba, setGlowRgba] = useState(
     hexToRgba(theme?.glowColor || "#ffffff", 0.6),
   );
 
   const palette = [
-    { name: "Noir doux", value: "#1A1A1A" },
-    { name: "Bleu pastel", value: "#C9DDF2" },
-    { name: "Menthe", value: "#D9F2E6" },
-    { name: "Rose poudré", value: "#F3D9DE" },
+    { name: "Deep Space Blue", value: "#13293D" },
+    { name: "Powder Blue", value: "#95B8D1" },
+    { name: "Pearl Beige", value: "#F4E4BA" },
+    { name: "Smoky Rose", value: "#A26769" },
   ]; */
 
   useLayoutEffect(() => {
@@ -126,13 +126,13 @@ function HomeHero({ arrowDots, theme, animatedColorsRef }) {
         if (mounted) {
           setBaseRgba(b);
           setTitleTextColor(getReadableTextColor(ac.base));
-          setHoverFill(hexToRgba(theme?.dotBase || "#111111", 0.9));
+          setHoverFill(hexToRgba(theme?.dotBase || "#13293D", 0.9));
           /* setGlowRgba(hexToRgba(theme?.glowColor || "#ffffff", 0.6)); */
         }
       } else if (mounted) {
-        setBaseRgba(hexToRgba(theme?.titleBg || "#111111", 1));
+        setBaseRgba(hexToRgba(theme?.titleBg || "#13293D", 1));
         setTitleTextColor(theme?.titleText || "#fff");
-        setHoverFill(hexToRgba(theme?.dotBase || "#111111", 0.9));
+        setHoverFill(hexToRgba(theme?.dotBase || "#13293D", 0.9));
         /* setGlowRgba(hexToRgba(theme?.glowColor || "#ffffff", 0.6)); */
       }
       raf = requestAnimationFrame(tick);
@@ -195,7 +195,7 @@ function HomeHero({ arrowDots, theme, animatedColorsRef }) {
           >
             Vincent Gelée
           </h1>
-          <span className="mt-0.5 mr-1  text-sm leading-none text-black">
+          <span className="mt-0.5 mr-1 text-sm leading-none text-[#13293D]">
             Compositeur
           </span>
         </div>

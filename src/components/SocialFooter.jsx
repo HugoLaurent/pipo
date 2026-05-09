@@ -14,7 +14,7 @@ function SocialFooter({ theme }) {
               href={item.href}
               className="inline-flex items-center justify-center rounded text-sm"
               aria-label={item.label}
-              style={{ color: theme?.text || "#111" }}
+              style={{ color: theme?.text || "#13293D" }}
             >
               {item.label}
             </a>

@@ -1,5 +1,13 @@
 @import "tailwindcss";
 
+@font-face {
+  font-family: "Faculty Glyphic";
+  src: url("./assets/FacultyGlyphic-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
 html,
 body {
   scroll-behavior: smooth;
@@ -7,6 +15,7 @@ body {
 }
 
 body {
+  font-family: "Faculty Glyphic", system-ui, sans-serif;
   margin: 0;
 }
 
@@ -15,10 +24,10 @@ body {
   scroll-snap-stop: always;
 }
 
-/* Theme color utility classes (pastels and accents) */
-/* Home (Noir doux / Bleu pastel) */
+/* Theme color utility classes */
+/* Home (Deep Space Blue) */
 .home-title-bg {
-  background-color: #111111;
+  background-color: #13293D;
 }
 
 .home-title-text {
@@ -26,7 +35,7 @@ body {
 }
 
 .home-button-bg {
-  background-color: #111111;
+  background-color: #13293D;
 }
 
 .home-button-text {
@@ -34,86 +43,86 @@ body {
 }
 
 .home-button-hover-bg {
-  background-color: #2A2A2A;
+  background-color: #A26769;
 }
 
 .home-dot-hover {
-  color: #C9DDF2;
+  color: #95B8D1;
 }
 
-/* Projets (Bleu principal / Bleu pastel) */
+/* Projets (Powder Blue) */
 .projets-title-bg {
-  background-color: #C9DDF2;
+  background-color: #95B8D1;
 }
 
 .projets-title-text {
-  color: #0F1D33;
+  color: #13293D;
 }
 
 .projets-button-bg {
-  background-color: #C9DDF2;
+  background-color: #95B8D1;
 }
 
 .projets-button-text {
-  color: #0F1D33;
+  color: #13293D;
 }
 
 .projets-button-hover-bg {
-  background-color: #5A88FF;
+  background-color: #13293D;
 }
 
 .projets-dot-hover {
-  color: #C9DDF2;
+  color: #95B8D1;
 }
 
-/* À propos (Menthe) */
+/* À propos (Pearl Beige) */
 .apropos-title-bg {
-  background-color: #D9F2E6;
+  background-color: #F4E4BA;
 }
 
 .apropos-title-text {
-  color: #103226;
+  color: #13293D;
 }
 
 .apropos-button-bg {
-  background-color: #D9F2E6;
+  background-color: #F4E4BA;
 }
 
 .apropos-button-text {
-  color: #103226;
+  color: #13293D;
 }
 
 .apropos-button-hover-bg {
-  background-color: #52B38B;
+  background-color: #95B8D1;
 }
 
 .apropos-dot-hover {
-  color: #D9F2E6;
+  color: #F4E4BA;
 }
 
-/* Contact (Rose) */
+/* Contact (Smoky Rose) */
 .contact-title-bg {
-  background-color: #F3D9DE;
+  background-color: #A26769;
 }
 
 .contact-title-text {
-  color: #34111F;
+  color: #FFFFFF;
 }
 
 .contact-button-bg {
-  background-color: #F3D9DE;
+  background-color: #A26769;
 }
 
 .contact-button-text {
-  color: #34111F;
+  color: #FFFFFF;
 }
 
 .contact-button-hover-bg {
-  background-color: #EF84AC;
+  background-color: #13293D;
 }
 
 .contact-dot-hover {
-  color: #F3D9DE;
+  color: #A26769;
 }
 
 /* Utility: apply button text color */
@@ -123,19 +132,19 @@ body {
 
 /* Theme body/text color utilities */
 .home-text {
-  color: #111111;
+  color: #13293D;
 }
 
 .projets-text {
-  color: #0F1D33;
+  color: #13293D;
 }
 
 .apropos-text {
-  color: #103226;
+  color: #13293D;
 }
 
 .contact-text {
-  color: #34111F;
+  color: #13293D;
 }
 
 /* Footer initial: no hover effects — only first letter colored via theme class */
