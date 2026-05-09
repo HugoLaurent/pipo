@@ -20,11 +20,11 @@ function SocialFooter({ theme }) {
             </a>
           </li>
         ))}
-        <li>
+        <li className="flex items-center">
           <a
             href="#"
             aria-label="Favicon"
-            className="inline-flex h-8 w-8 items-center justify-center overflow-hidden rounded"
+            className="inline-flex h-4 w-4 translate-y-[2px] items-center justify-center overflow-hidden rounded"
             style={{ boxShadow: `0 0 12px ${theme?.pageBg || "#fff"}` }}
           >
             <img

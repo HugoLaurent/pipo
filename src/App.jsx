@@ -3,7 +3,15 @@ import ContentSection from "./components/ContentSection";
 import HomeHero from "./components/HomeHero";
 import SiteNav from "./components/SiteNav";
 import SocialFooter from "./components/SocialFooter";
-import { useEffect, useMemo, useRef, useState } from "react";
+import {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
+import gsap from "gsap";
 
 const THEMES = {
   home: {
@@ -64,6 +72,15 @@ const THEMES = {
   },
 };
 
+const PROJECTS = Array.from({ length: 8 }, (_, index) => ({
+  title: `Projet ${index + 1}`,
+  youtubeEmbedUrl:
+    "https://www.youtube.com/embed/gQ5N6neDmZI?si=6Am02UggXtPoGJJ6",
+  thumbnailUrl: "https://img.youtube.com/vi/gQ5N6neDmZI/hqdefault.jpg",
+  description:
+    "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer vitae sem vel neque posuere luctus.",
+}));
+
 function hexToRgbTriplet(hex) {
   const value = hex.replace("#", "");
   const normalized = value.length === 3 ? value.replace(/./g, "$&$&") : value;
@@ -117,6 +134,14 @@ function App() {
 
   const sectionRefs = useRef({});
   const [activeThemeKey, setActiveThemeKey] = useState("home");
+  const [projectsPage, setProjectsPage] = useState(0);
+  const [selectedProject, setSelectedProject] = useState(null);
+  const [projectModalOrigin, setProjectModalOrigin] = useState(null);
+  const projectCardsRef = useRef([]);
+  const paginationDotsRef = useRef([]);
+  const projectModalOverlayRef = useRef(null);
+  const projectModalPanelRef = useRef(null);
+  const isProjectModalClosingRef = useRef(false);
   const animatedColorsRef = useRef({
     base: { r: 17, g: 17, b: 17 },
     hover: { r: 201, g: 221, b: 242 },
@@ -124,6 +149,12 @@ function App() {
   });
 
   const activeTheme = THEMES[activeThemeKey];
+  const projectsPerPage = 3;
+  const projectsPageCount = Math.ceil(PROJECTS.length / projectsPerPage);
+  const visibleProjects = PROJECTS.slice(
+    projectsPage * projectsPerPage,
+    projectsPage * projectsPerPage + projectsPerPage,
+  );
 
   const themeVars = useMemo(
     () => ({
@@ -134,6 +165,138 @@ function App() {
     }),
     [activeTheme],
   );
+
+  const openProjectModal = useCallback((project, element) => {
+    const rect = element.getBoundingClientRect();
+    isProjectModalClosingRef.current = false;
+    setProjectModalOrigin({
+      top: rect.top,
+      left: rect.left,
+      width: rect.width,
+      height: rect.height,
+    });
+    setSelectedProject(project);
+  }, []);
+
+  const closeProjectModal = useCallback(() => {
+    if (isProjectModalClosingRef.current) return;
+    isProjectModalClosingRef.current = true;
+
+    const overlay = projectModalOverlayRef.current;
+    const panel = projectModalPanelRef.current;
+
+    if (!overlay || !panel || !projectModalOrigin) {
+      setSelectedProject(null);
+      setProjectModalOrigin(null);
+      return;
+    }
+
+    gsap.to(overlay, {
+      opacity: 0,
+      duration: 0.2,
+      ease: "power2.out",
+      overwrite: true,
+    });
+
+    gsap.to(panel, {
+      top: projectModalOrigin.top,
+      left: projectModalOrigin.left,
+      width: projectModalOrigin.width,
+      height: projectModalOrigin.height,
+      duration: 0.36,
+      ease: "power3.inOut",
+      overwrite: true,
+      onComplete: () => {
+        setSelectedProject(null);
+        setProjectModalOrigin(null);
+        isProjectModalClosingRef.current = false;
+      },
+    });
+  }, [projectModalOrigin]);
+
+  useLayoutEffect(() => {
+    const cards = projectCardsRef.current
+      .slice(0, visibleProjects.length)
+      .filter(Boolean);
+    const dots = paginationDotsRef.current.filter(Boolean);
+
+    gsap.fromTo(
+      cards,
+      { autoAlpha: 0, y: 16 },
+      {
+        autoAlpha: 1,
+        y: 0,
+        duration: 0.42,
+        ease: "power3.out",
+        stagger: 0.06,
+        overwrite: true,
+        clearProps: "transform",
+      },
+    );
+
+    gsap.to(dots, {
+      scale: (index) => (index === projectsPage ? 1.45 : 1),
+      opacity: (index) => (index === projectsPage ? 1 : 0.55),
+      duration: 0.28,
+      ease: "power2.out",
+      overwrite: true,
+    });
+  }, [projectsPage, visibleProjects.length]);
+
+  useLayoutEffect(() => {
+    const overlay = projectModalOverlayRef.current;
+    const panel = projectModalPanelRef.current;
+    if (!selectedProject || !projectModalOrigin || !overlay || !panel) return;
+
+    const finalWidth = Math.min(window.innerWidth - 32, 1152);
+    const finalHeight = Math.min(window.innerHeight - 64, 900);
+    const finalTop = (window.innerHeight - finalHeight) / 2;
+    const finalLeft = (window.innerWidth - finalWidth) / 2;
+
+    gsap.set(overlay, { opacity: 0 });
+    gsap.set(panel, {
+      top: projectModalOrigin.top,
+      left: projectModalOrigin.left,
+      width: projectModalOrigin.width,
+      height: projectModalOrigin.height,
+    });
+
+    gsap.to(overlay, {
+      opacity: 1,
+      duration: 0.24,
+      ease: "power2.out",
+      overwrite: true,
+    });
+
+    gsap.to(panel, {
+      top: finalTop,
+      left: finalLeft,
+      width: finalWidth,
+      height: finalHeight,
+      duration: 0.48,
+      ease: "power3.inOut",
+      overwrite: true,
+    });
+  }, [projectModalOrigin, selectedProject]);
+
+  useEffect(() => {
+    if (!selectedProject) return undefined;
+
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+
+    function handleKeyDown(event) {
+      if (event.key === "Escape") {
+        closeProjectModal();
+      }
+    }
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [closeProjectModal, selectedProject]);
 
   useEffect(() => {
     let frame = 0;
@@ -294,7 +457,7 @@ function App() {
             sectionRefs.current.home = element;
           }}
           data-theme-key="home"
-          className="snap-section relative flex h-[100dvh] items-center justify-center"
+          className="snap-section relative flex h-dvh items-center justify-center"
         >
           <HomeHero
             arrowDots={arrowDots}
@@ -309,10 +472,85 @@ function App() {
             sectionRefs.current.projets = element;
           }}
           dataThemeKey="projets"
+          contentClassName="w-full max-w-5xl"
           title="Projets"
           subtitle="Sélection de travaux et collaborations"
         >
-          Quelques morceaux, clips et projets à mettre en avant.
+          <div>
+            <div className="grid grid-cols-1 gap-5 md:grid-cols-3">
+              {visibleProjects.map((project, index) => (
+                <button
+                  key={project.title}
+                  ref={(element) => {
+                    projectCardsRef.current[index] = element;
+                  }}
+                  type="button"
+                  className="overflow-hidden rounded-lg bg-white/90 text-left shadow-sm ring-1 ring-black/10 backdrop-blur-sm transition-colors hover:bg-white focus:outline-none focus:ring-2 focus:ring-zinc-950"
+                  onClick={(event) =>
+                    openProjectModal(project, event.currentTarget)
+                  }
+                >
+                  <img
+                    className="pointer-events-none aspect-video w-full bg-zinc-100 object-cover"
+                    src={project.thumbnailUrl}
+                    alt=""
+                  />
+                  <div className="p-4">
+                    <h3 className="text-base font-semibold leading-tight text-zinc-950">
+                      {project.title}
+                    </h3>
+                    <p className="mt-2 text-sm leading-6 text-zinc-700">
+                      {project.description}
+                    </p>
+                  </div>
+                </button>
+              ))}
+            </div>
+
+            <div className="mt-5 flex items-center justify-between gap-4">
+              <button
+                type="button"
+                className="rounded-md bg-white/90 px-3 py-2 text-sm font-medium text-zinc-950 shadow-sm ring-1 ring-black/10 transition-colors hover:bg-white disabled:cursor-not-allowed disabled:opacity-40"
+                disabled={projectsPage === 0}
+                onClick={() =>
+                  setProjectsPage((currentPage) => Math.max(0, currentPage - 1))
+                }
+              >
+                Précédent
+              </button>
+
+              <div className="flex items-center gap-2" aria-label="Pagination">
+                {Array.from({ length: projectsPageCount }, (_, index) => (
+                  <button
+                    key={index}
+                    ref={(element) => {
+                      paginationDotsRef.current[index] = element;
+                    }}
+                    type="button"
+                    aria-label={`Page ${index + 1}`}
+                    aria-current={projectsPage === index ? "page" : undefined}
+                    className={`h-2.5 w-2.5 rounded-full transition-colors ${
+                      projectsPage === index ? "bg-zinc-950" : "bg-zinc-300"
+                    }`}
+                    onClick={() => setProjectsPage(index)}
+                  />
+                ))}
+              </div>
+
+              <button
+                type="button"
+                className="rounded-md bg-white/90 px-3 py-2 text-sm font-medium text-zinc-950 shadow-sm ring-1 ring-black/10 transition-colors hover:bg-white disabled:cursor-not-allowed disabled:opacity-40"
+                disabled={projectsPage === projectsPageCount - 1}
+                onClick={() =>
+                  setProjectsPage((currentPage) =>
+                    Math.min(projectsPageCount - 1, currentPage + 1),
+                  )
+                }
+              >
+                Suivant
+              </button>
+            </div>
+          </div>
         </ContentSection>
 
         <ContentSection
@@ -341,6 +579,60 @@ function App() {
 
         <SocialFooter theme={THEMES.home} />
       </main>
+
+      {selectedProject && (
+        <div
+          ref={projectModalOverlayRef}
+          className="fixed inset-0 z-50 bg-white/95 backdrop-blur-md"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="project-modal-title"
+          onClick={closeProjectModal}
+        >
+          <div
+            ref={projectModalPanelRef}
+            className="fixed grid grid-rows-[1fr_auto] overflow-hidden rounded-lg bg-white shadow-2xl ring-1 ring-black/10 md:grid-cols-[minmax(0,1.4fr)_minmax(280px,0.6fr)] md:grid-rows-1"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <div className="flex min-h-0 items-center justify-center bg-zinc-950">
+              <iframe
+                className="h-full w-full"
+                src={selectedProject.youtubeEmbedUrl}
+                title={selectedProject.title}
+                frameBorder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                referrerPolicy="strict-origin-when-cross-origin"
+                allowFullScreen
+              />
+            </div>
+
+            <aside className="flex flex-col justify-between gap-8 p-6 text-zinc-950 md:p-8">
+              <div>
+                <p className="text-sm uppercase tracking-[0.25em] text-zinc-500">
+                  Projet
+                </p>
+                <h2
+                  id="project-modal-title"
+                  className="mt-3 text-3xl font-semibold"
+                >
+                  {selectedProject.title}
+                </h2>
+                <p className="mt-5 text-base leading-7 text-zinc-700">
+                  {selectedProject.description}
+                </p>
+              </div>
+
+              <button
+                type="button"
+                className="self-start rounded-md bg-zinc-950 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-zinc-700"
+                onClick={closeProjectModal}
+              >
+                Fermer
+              </button>
+            </aside>
+          </div>
+        </div>
+      )}
     </Background>
   );
 }
