@@ -3,6 +3,12 @@ import ContentSection from "./components/ContentSection";
 import HomeHero from "./components/HomeHero";
 import SiteNav from "./components/SiteNav";
 import SocialFooter from "./components/SocialFooter";
+import grisBVideo from "./assets/videos/Gris B.mov";
+import pubDiorVideo from "./assets/videos/Pub Dior.mp4";
+import pubIphoneVideo from "./assets/videos/Pub Iphone 16.mp4";
+import pubMercedesVideo from "./assets/videos/Pub-Mercedes-Vincent.mp4";
+import pubNikeVideo from "./assets/videos/Pub Nike 142Bpm Drill and bass.mp4";
+import pubRollsRoyceVideo from "./assets/videos/Pub Rolls Royce.mp4";
 import {
   useCallback,
   useEffect,
@@ -72,24 +78,18 @@ const THEMES = {
   },
 };
 
-const PROJECT_VIDEOS = [
-  { id: "fy33YRfNlOE", si: "bYjExvvX4cVFWg06" },
-  { id: "MHHk6trU_FI", si: "7vtYc3sIHOolBwPK" },
-  { id: "mthHcXEWrtE", si: "fmmBEFmwXkJ7KIrZ" },
-  { id: "eIqDVxeTBdg", si: "lCUzgck8JhvpEqA2" },
-];
-
-const PROJECTS = Array.from({ length: 8 }, (_, index) => {
-  const video = PROJECT_VIDEOS[index % PROJECT_VIDEOS.length];
-
-  return {
-    title: `Projet ${index + 1}`,
-    youtubeEmbedUrl: `https://www.youtube.com/embed/${video.id}?si=${video.si}`,
-    thumbnailUrl: `https://img.youtube.com/vi/${video.id}/hqdefault.jpg`,
-    description:
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer vitae sem vel neque posuere luctus.",
-  };
-});
+const PROJECTS = [
+  { title: "Pub Dior", videoUrl: pubDiorVideo },
+  { title: "Pub Nike", videoUrl: pubNikeVideo, previewTime: 10 },
+  { title: "Pub Mercedes", videoUrl: pubMercedesVideo },
+  { title: "Gris B", videoUrl: grisBVideo, previewTime: 39 },
+  { title: "Pub iPhone 16", videoUrl: pubIphoneVideo, previewTime: 10.5 },
+  { title: "Pub Rolls Royce", videoUrl: pubRollsRoyceVideo, previewTime: 2 },
+].map((project) => ({
+  ...project,
+  description:
+    "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer vitae sem vel neque posuere luctus.",
+}));
 
 function hexToRgbTriplet(hex) {
   const value = hex.replace("#", "");
@@ -147,6 +147,7 @@ function App() {
   const [projectsPage, setProjectsPage] = useState(0);
   const [selectedProject, setSelectedProject] = useState(null);
   const [projectModalOrigin, setProjectModalOrigin] = useState(null);
+  const aboutCardsRef = useRef([]);
   const projectCardsRef = useRef([]);
   const paginationDotsRef = useRef([]);
   const projectModalOverlayRef = useRef(null);
@@ -252,6 +253,25 @@ function App() {
       overwrite: true,
     });
   }, [projectsPage, visibleProjects.length]);
+
+  useLayoutEffect(() => {
+    if (activeThemeKey !== "apropos") return;
+
+    const cards = aboutCardsRef.current.filter(Boolean);
+    gsap.fromTo(
+      cards,
+      { autoAlpha: 0, x: 28 },
+      {
+        autoAlpha: 1,
+        x: 0,
+        duration: 0.48,
+        ease: "power3.out",
+        stagger: 0.08,
+        overwrite: true,
+        clearProps: "transform",
+      },
+    );
+  }, [activeThemeKey]);
 
   useLayoutEffect(() => {
     const overlay = projectModalOverlayRef.current;
@@ -484,7 +504,7 @@ function App() {
           dataThemeKey="projets"
           contentClassName="w-full max-w-5xl"
           title="Projets"
-          subtitle="Sélection de travaux et collaborations"
+          subtitle="Rescoring, sound design et musiques à l’image"
         >
           <div>
             <div className="grid grid-cols-1 gap-5 md:grid-cols-3">
@@ -495,17 +515,23 @@ function App() {
                     projectCardsRef.current[index] = element;
                   }}
                   type="button"
-                  className="overflow-hidden rounded-lg bg-white/90 text-left shadow-sm ring-1 ring-black/10 backdrop-blur-sm transition-colors hover:bg-white focus:outline-none focus:ring-2 focus:ring-zinc-950"
+                  className="overflow-hidden rounded-lg bg-white/90 text-left shadow-sm ring-1 ring-black/10 backdrop-blur-sm transition-colors hover:bg-white focus:outline-none focus:ring-2 focus:ring-[#13293D]"
                   onClick={(event) =>
                     openProjectModal(project, event.currentTarget)
                   }
                 >
-                  <img
+                  <video
                     className="pointer-events-none aspect-video w-full bg-zinc-100 object-cover"
-                    src={project.thumbnailUrl}
-                    alt=""
+                    src={
+                      project.previewTime
+                        ? `${project.videoUrl}#t=${project.previewTime}`
+                        : project.videoUrl
+                    }
+                    muted
+                    playsInline
+                    preload="metadata"
                   />
-                  <div className="p-4">
+                  <div className="border-l-4 border-[#95B8D1] p-4">
                     <h3 className="text-base font-semibold leading-tight text-[#13293D]">
                       {project.title}
                     </h3>
@@ -560,6 +586,12 @@ function App() {
                 Suivant
               </button>
             </div>
+
+            <p className="mt-4 text-center text-xs leading-5 text-[#13293D]/65">
+              Exercices personnels de rescoring sonore. Les images et marques
+              appartiennent à leurs ayants droit respectifs ; ces projets ne
+              sont pas affiliés aux marques présentées.
+            </p>
           </div>
         </ContentSection>
 
@@ -574,36 +606,44 @@ function App() {
           subtitle="Compositeur et univers personnel"
         >
           <div className="grid gap-8 md:grid-cols-[minmax(0,1.2fr)_minmax(220px,0.8fr)]">
-            <div className="space-y-5 text-[#13293D]">
+            <div className="space-y-5 rounded-lg bg-white/35  text-[#13293D] backdrop-blur-[1px]">
               <p>
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer
-                vitae sem vel neque posuere luctus. Sed non magna at augue
-                facilisis tincidunt vitae et lectus.
+                Compositeur et créateur sonore basé à Paris, je compose des
+                musiques pensées pour l’image, avec une approche centrée sur
+                l’émotion, le rythme et la narration.
               </p>
               <p>
-                Praesent euismod, mi non fermentum faucibus, lorem justo
-                suscipit sapien, vitae cursus libero arcu in neque. Suspendisse
-                potenti. Donec accumsan, ipsum in luctus imperdiet, erat sem
-                porttitor nunc, non blandit nibh nibh sit amet erat.
+                Influencé par le jeu vidéo, les trailers et la publicité, je
+                cherche avant tout à créer des univers sonores capables de
+                s’intégrer à une atmosphère et de renforcer l’identité d’un
+                projet.
               </p>
               <p>
-                Curabitur tempor augue at lacus pretium, ac pharetra lorem
-                gravida. Aliquam erat volutpat. Vestibulum ante ipsum primis in
-                faucibus orci luctus et ultrices posuere cubilia curae.
+                Ma manière de composer commence par la dynamique et l’énergie,
+                avant de laisser place à l’émotion puis au détail sonore.
+                Guitariste de formation et passionné par de nombreux styles
+                musicaux, j’aime explorer différentes couleurs et sensibilités à
+                travers chaque collaboration.
+              </p>
+              <p>
+                Aujourd’hui, je développe principalement des créations autour du
+                jeu vidéo, des formats cinématographiques et de la publicité.
               </p>
             </div>
 
             <div className="grid gap-3 text-sm text-[#13293D]">
               {[
-                ["Approche", "Lorem ipsum dolor sit amet", "#13293D"],
-                ["Formats", "Film, scène, installation", "#95B8D1"],
-                ["Univers", "Acoustique, électronique, silence", "#F4E4BA"],
-                ["Lieu", "Paris et collaborations à distance", "#A26769"],
-              ].map(([label, value, accentColor]) => (
+                ["Approche", "Émotion, rythme, narration"],
+                ["Formats", "Jeu vidéo, cinéma, publicité"],
+                ["Univers", "Atmosphère, émotion, identité sonore"],
+                ["Base", "Paris et collaborations à distance"],
+              ].map(([label, value], index) => (
                 <div
                   key={label}
-                  className="rounded-lg border-l-4 bg-white/70 p-4 shadow-sm ring-1 ring-black/10 backdrop-blur-sm"
-                  style={{ borderLeftColor: accentColor }}
+                  ref={(element) => {
+                    aboutCardsRef.current[index] = element;
+                  }}
+                  className="rounded-lg border-l-4 border-[#F4E4BA] bg-white/70 p-4 shadow-sm ring-1 ring-black/10 backdrop-blur-sm"
                 >
                   <p className="text-xs uppercase tracking-[0.2em] text-[#13293D]/60">
                     {label}
@@ -621,10 +661,51 @@ function App() {
             sectionRefs.current.contact = element;
           }}
           dataThemeKey="contact"
+          contentClassName="w-full max-w-4xl"
           title="Contact"
           subtitle="On travaille ensemble ?"
         >
-          Écris-moi pour une collaboration, une écoute ou un devis.
+          <div className="grid items-center gap-8 md:grid-cols-[minmax(0,1.1fr)_minmax(240px,0.9fr)]">
+            <div className="space-y-5 rounded-lg bg-white/35  text-[#13293D] backdrop-blur-[1px]">
+              <p>
+                Vous préparez un jeu, un film, une bande-annonce ou une campagne
+                ? Je suis disponible pour échanger autour de votre projet,
+                comprendre son intention et imaginer une direction sonore
+                adaptée.
+              </p>
+              <p>
+                Envoyez-moi quelques lignes sur le format, l’univers, les délais
+                et les besoins musicaux. Je vous répondrai avec plaisir pour
+                discuter d’une collaboration, d’une écoute ou d’un devis.
+              </p>
+
+              <a
+                href="mailto:contact@vincentgelee.com"
+                className="inline-flex rounded-md bg-[#13293D] px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-[#A26769]"
+              >
+                Écrire un message
+              </a>
+            </div>
+
+            <div className="grid gap-3 text-sm text-[#13293D]">
+              {[
+                ["Email", "contact@vincentgelee.com"],
+                ["Disponibilité", "Collaborations et commandes"],
+                ["Formats", "Jeu vidéo, cinéma, publicité"],
+                ["Basé à", "Paris"],
+              ].map(([label, value]) => (
+                <div
+                  key={label}
+                  className="rounded-lg border-l-4 border-[#A26769] bg-white/70 p-4 shadow-sm ring-1 ring-black/10 backdrop-blur-sm"
+                >
+                  <p className="text-xs uppercase tracking-[0.2em] text-[#13293D]/60">
+                    {label}
+                  </p>
+                  <p className="mt-2 font-medium text-[#13293D]">{value}</p>
+                </div>
+              ))}
+            </div>
+          </div>
         </ContentSection>
 
         <SocialFooter theme={THEMES.home} />
@@ -645,14 +726,12 @@ function App() {
             onClick={(event) => event.stopPropagation()}
           >
             <div className="flex min-h-0 items-center justify-center bg-zinc-950">
-              <iframe
-                className="h-full w-full"
-                src={selectedProject.youtubeEmbedUrl}
-                title={selectedProject.title}
-                frameBorder="0"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                referrerPolicy="strict-origin-when-cross-origin"
-                allowFullScreen
+              <video
+                className="max-h-full w-full object-contain"
+                src={selectedProject.videoUrl}
+                controls
+                autoPlay
+                playsInline
               />
             </div>
 
@@ -672,13 +751,19 @@ function App() {
                 </p>
               </div>
 
-              <button
-                type="button"
-                className="self-start rounded-md bg-[#13293D] px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-[#A26769]"
-                onClick={closeProjectModal}
-              >
-                Fermer
-              </button>
+              <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+                <p className="max-w-xs text-xs leading-5 text-[#13293D]/60">
+                  Exercice personnel de rescoring sonore. Images et marques :
+                  ayants droit respectifs.
+                </p>
+                <button
+                  type="button"
+                  className="self-start rounded-md bg-[#13293D] px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-[#A26769] md:self-auto"
+                  onClick={closeProjectModal}
+                >
+                  Fermer
+                </button>
+              </div>
             </aside>
           </div>
         </div>

@@ -43,7 +43,7 @@ function SiteNav({ theme, activeThemeKey, animatedColorsRef }) {
     const startY = window.scrollY;
     const targetY = target.getBoundingClientRect().top + window.scrollY;
     const distance = targetY - startY;
-    const duration = 1100;
+    const duration = 300;
     let startTime = 0;
 
     function easeInOutCubic(value) {

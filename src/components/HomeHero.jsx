@@ -183,8 +183,9 @@ function HomeHero({ arrowDots, theme, animatedColorsRef }) {
     <>
       <div ref={anchorRef} className="relative">
         <div
-          className="invisible pointer-events-none select-none rounded-3xl px-6 py-5 text-right shadow-lg ring-1 ring-black/5 backdrop-blur-sm"
+          className="invisible pointer-events-none select-none rounded-3xl border-l-4 px-6 py-5 text-right shadow-lg ring-1 ring-black/5 backdrop-blur-sm"
           aria-hidden="true"
+          style={{ borderLeftColor: baseRgba }}
         >
           <h1
             className={`inline-block rounded-lg px-4 py-2 text-2xl font-medium leading-none`}
@@ -203,8 +204,8 @@ function HomeHero({ arrowDots, theme, animatedColorsRef }) {
 
       <div
         ref={cardRef}
-        className="fixed z-40 rounded-3xl px-6 py-5 text-right shadow-lg ring-1 ring-black/5 backdrop-blur-sm transition-colors duration-700"
-        style={{ top: 0, left: 0 }}
+        className="fixed z-40 rounded-3xl border-l-4 px-6 py-5 text-right shadow-lg ring-1 ring-black/5 backdrop-blur-sm transition-colors duration-700"
+        style={{ top: 0, left: 0, borderLeftColor: baseRgba }}
       >
         <h1
           className={`inline-block rounded-lg px-4 py-2 text-2xl font-medium leading-none`}
