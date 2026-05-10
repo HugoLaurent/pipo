@@ -214,6 +214,7 @@ function App() {
   ];
 
   const sectionRefs = useRef({});
+  const sectionsPositionsRef = useRef([]);
   const [activeThemeKey, setActiveThemeKey] = useState("home");
   const [projectsPage, setProjectsPage] = useState(0);
   const [selectedProject, setSelectedProject] = useState(null);
@@ -455,8 +456,8 @@ function App() {
     let releaseSnapTimer = 0;
     let isSnapping = false;
 
-    function getSections() {
-      return Object.entries(sectionRefs.current)
+    function computeSections() {
+      const sections = Object.entries(sectionRefs.current)
         .map(([key, element]) => {
           if (!element || !THEMES[key]) return null;
 
@@ -468,18 +469,20 @@ function App() {
         })
         .filter(Boolean)
         .sort((a, b) => a.center - b.center);
+
+      sectionsPositionsRef.current = sections;
+      return sections;
     }
 
-    function getClosestSection() {
+    function getClosestFromCache() {
+      const sections = sectionsPositionsRef.current;
       const viewportCenter = window.scrollY + window.innerHeight / 2;
       let closestKey = "home";
       let closestSection = null;
       let closestDistance = Number.POSITIVE_INFINITY;
-      const sections = getSections();
 
       sections.forEach((section) => {
         const distance = Math.abs(section.center - viewportCenter);
-
         if (distance < closestDistance) {
           closestDistance = distance;
           closestKey = section.key;
@@ -491,7 +494,9 @@ function App() {
     }
 
     function updateActiveTheme() {
-      const { closestKey, sections, viewportCenter } = getClosestSection();
+      const { closestKey, sections, viewportCenter } = getClosestFromCache();
+
+      if (!sections || sections.length === 0) return;
 
       const nextSectionIndex = sections.findIndex(
         (section) => section.center >= viewportCenter,
@@ -542,7 +547,7 @@ function App() {
     function snapToClosestSection() {
       if (isSnapping) return;
 
-      const { closestSection } = getClosestSection();
+      const { closestSection } = getClosestFromCache();
       if (!closestSection) return;
 
       const distanceToSection = Math.abs(
@@ -572,16 +577,26 @@ function App() {
       }
     }
 
+    // compute initial cache and wire listeners
+    computeSections();
     updateActiveTheme();
+
+    const onResize = () => {
+      computeSections();
+      requestUpdate();
+    };
+
     window.addEventListener("scroll", requestUpdate, { passive: true });
-    window.addEventListener("resize", requestUpdate);
+    window.addEventListener("resize", onResize);
+    window.addEventListener("orientationchange", onResize);
 
     return () => {
       cancelAnimationFrame(frame);
       clearTimeout(snapTimer);
       clearTimeout(releaseSnapTimer);
       window.removeEventListener("scroll", requestUpdate);
-      window.removeEventListener("resize", requestUpdate);
+      window.removeEventListener("resize", onResize);
+      window.removeEventListener("orientationchange", onResize);
     };
   }, []);
 

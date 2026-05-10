@@ -31,6 +31,7 @@ function DotPattern({
   const animationRef = useRef();
   const startTimeRef = useRef(Date.now());
   const [scrollProgress, setScrollProgress] = useState(0);
+  const isMobileRef = useRef(typeof window !== "undefined" ? window.innerWidth < 768 : false);
 
   const baseRgb = useMemo(() => hexToRgb(baseColor), [baseColor]);
   const glowRgb = useMemo(() => hexToRgb(glowColor), [glowColor]);
@@ -82,10 +83,12 @@ function DotPattern({
     if (!canvas || !container) return;
 
     const rect = container.getBoundingClientRect();
-    const dpr = window.devicePixelRatio || 1;
+    // reduce devicePixelRatio on mobile to avoid expensive high-res canvas
+    const rawDpr = window.devicePixelRatio || 1;
+    const dpr = isMobileRef.current ? Math.min(1, rawDpr) : rawDpr;
 
-    canvas.width = rect.width * dpr;
-    canvas.height = rect.height * dpr;
+    canvas.width = Math.max(1, Math.floor(rect.width * dpr));
+    canvas.height = Math.max(1, Math.floor(rect.height * dpr));
     canvas.style.width = `${rect.width}px`;
     canvas.style.height = `${rect.height}px`;
 
@@ -259,7 +262,12 @@ function DotPattern({
       ctx.fill();
     }
 
-    animationRef.current = requestAnimationFrame(draw);
+    // schedule next frame only when not on mobile to save CPU
+    if (!isMobileRef.current) {
+      animationRef.current = requestAnimationFrame(draw);
+    } else {
+      animationRef.current = null;
+    }
   }, [
     proximity,
     baseRgb,
@@ -279,19 +287,45 @@ function DotPattern({
 
     const ro = new ResizeObserver(buildGrid);
     ro.observe(container);
-
     return () => ro.disconnect();
   }, [buildGrid]);
 
   useEffect(() => {
-    animationRef.current = requestAnimationFrame(draw);
+    // re-evaluate mobile flag on mount and on resize
+    function updateIsMobile() {
+      isMobileRef.current = window.innerWidth < 768;
+    }
+
+    updateIsMobile();
+    window.addEventListener("resize", updateIsMobile, { passive: true });
+    window.addEventListener("orientationchange", updateIsMobile, { passive: true });
+
+    // Start animation loop only for non-mobile. For mobile, draw one frame for a static background.
+    if (!isMobileRef.current) {
+      animationRef.current = requestAnimationFrame(draw);
+    } else {
+      // draw a single frame to render background without continuous rAF
+      draw();
+    }
+
     return () => {
       if (animationRef.current) cancelAnimationFrame(animationRef.current);
+      window.removeEventListener("resize", updateIsMobile);
+      window.removeEventListener("orientationchange", updateIsMobile);
     };
   }, [draw]);
 
   useEffect(() => {
-    const handleMouseMove = (e) => {
+    const container = containerRef.current;
+
+    function handleScroll() {
+      const maxScroll = Math.max(1, window.innerHeight * 0.9);
+      const nextProgress = Math.min(1, window.scrollY / maxScroll);
+      setScrollProgress(nextProgress);
+    }
+
+    // Only attach mouse listeners on non-mobile to avoid extra work
+    function handleMouseMove(e) {
       const canvas = canvasRef.current;
       if (!canvas) return;
       const rect = canvas.getBoundingClientRect();
@@ -299,20 +333,13 @@ function DotPattern({
         x: e.clientX - rect.left,
         y: e.clientY - rect.top,
       };
-    };
+    }
 
-    const handleScroll = () => {
-      const maxScroll = Math.max(1, window.innerHeight * 0.9);
-      const nextProgress = Math.min(1, window.scrollY / maxScroll);
-      setScrollProgress(nextProgress);
-    };
-
-    const handleMouseLeave = () => {
+    function handleMouseLeave() {
       mouseRef.current = { x: -1000, y: -1000 };
-    };
+    }
 
-    const container = containerRef.current;
-    if (container) {
+    if (container && !isMobileRef.current) {
       container.addEventListener("mousemove", handleMouseMove);
       container.addEventListener("mouseleave", handleMouseLeave);
     }
@@ -321,7 +348,7 @@ function DotPattern({
     handleScroll();
 
     return () => {
-      if (container) {
+      if (container && !isMobileRef.current) {
         container.removeEventListener("mousemove", handleMouseMove);
         container.removeEventListener("mouseleave", handleMouseLeave);
       }
