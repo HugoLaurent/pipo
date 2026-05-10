@@ -514,7 +514,7 @@ function App() {
       cancelAnimationFrame(frame);
       frame = requestAnimationFrame(updateActiveTheme);
 
-      if (!isSnapping) {
+      if (!isSnapping && window.innerWidth >= 768) {
         clearTimeout(snapTimer);
         snapTimer = setTimeout(snapToClosestSection, 140);
       }
@@ -541,7 +541,7 @@ function App() {
       animatedColorsRef={animatedColorsRef}
     >
       <main
-        className="relative px-4 transition-colors duration-700"
+        className="relative px-4 transition-colors duration-700 md:px-4"
         style={themeVars}
       >
         <SiteNav
@@ -576,7 +576,7 @@ function App() {
           subtitle="Rescoring, sound design et musiques à l’image"
         >
           <div>
-            <div className="grid grid-cols-1 gap-5 md:grid-cols-3">
+            <div className="grid grid-cols-1 gap-3 md:grid-cols-3 md:gap-5">
               {visibleProjects.map((project, index) => (
                 <button
                   key={project.title}
@@ -584,7 +584,7 @@ function App() {
                     projectCardsRef.current[index] = element;
                   }}
                   type="button"
-                  className="overflow-hidden rounded-lg bg-white/90 text-left shadow-sm ring-1 ring-black/10 backdrop-blur-sm transition-colors hover:bg-white focus:outline-none focus:ring-2 focus:ring-[#13293D]"
+                  className="grid overflow-hidden rounded-lg bg-white/90 text-left shadow-sm ring-1 ring-black/10 backdrop-blur-sm transition-colors hover:bg-white focus:outline-none focus:ring-2 focus:ring-[#13293D] sm:grid-cols-[minmax(120px,0.9fr)_minmax(0,1.1fr)] md:block"
                   onMouseEnter={(event) => liftProjectCard(event.currentTarget)}
                   onMouseLeave={(event) => resetProjectCard(event.currentTarget)}
                   onFocus={(event) => liftProjectCard(event.currentTarget)}
@@ -594,7 +594,7 @@ function App() {
                   }
                 >
                   <video
-                    className="pointer-events-none aspect-video w-full bg-zinc-100 object-cover"
+                    className="pointer-events-none aspect-video h-full w-full bg-zinc-100 object-cover"
                     src={
                       project.previewTime
                         ? `${project.videoUrl}#t=${project.previewTime}`
@@ -604,11 +604,11 @@ function App() {
                     playsInline
                     preload="metadata"
                   />
-                  <div className="border-l-4 border-[#95B8D1] p-4">
-                    <h3 className="text-base font-semibold leading-tight text-[#13293D]">
+                  <div className="border-l-4 border-[#95B8D1] p-3 md:p-4">
+                    <h3 className="text-sm font-semibold leading-tight text-[#13293D] md:text-base">
                       {project.title}
                     </h3>
-                    <p className="mt-2 line-clamp-2 text-sm leading-6 text-[#13293D]/80">
+                    <p className="mt-2 line-clamp-2 text-xs leading-5 text-[#13293D]/80 md:text-sm md:leading-6">
                       {project.description.join(" ")}
                     </p>
                   </div>
@@ -616,10 +616,10 @@ function App() {
               ))}
             </div>
 
-            <div className="mt-5 flex items-center justify-between gap-4">
+            <div className="mt-4 flex items-center justify-between gap-3 md:mt-5 md:gap-4">
               <button
                 type="button"
-                className="rounded-md bg-white/90 px-3 py-2 text-sm font-medium text-[#13293D] shadow-sm ring-1 ring-black/10 transition-colors hover:bg-white disabled:cursor-not-allowed disabled:opacity-40"
+                className="rounded-md bg-white/90 px-3 py-2 text-xs font-medium text-[#13293D] shadow-sm ring-1 ring-black/10 transition-colors hover:bg-white disabled:cursor-not-allowed disabled:opacity-40 md:text-sm"
                 disabled={projectsPage === 0}
                 onClick={() =>
                   setProjectsPage((currentPage) => Math.max(0, currentPage - 1))
@@ -648,7 +648,7 @@ function App() {
 
               <button
                 type="button"
-                className="rounded-md bg-white/90 px-3 py-2 text-sm font-medium text-[#13293D] shadow-sm ring-1 ring-black/10 transition-colors hover:bg-white disabled:cursor-not-allowed disabled:opacity-40"
+                className="rounded-md bg-white/90 px-3 py-2 text-xs font-medium text-[#13293D] shadow-sm ring-1 ring-black/10 transition-colors hover:bg-white disabled:cursor-not-allowed disabled:opacity-40 md:text-sm"
                 disabled={projectsPage === projectsPageCount - 1}
                 onClick={() =>
                   setProjectsPage((currentPage) =>
@@ -660,7 +660,7 @@ function App() {
               </button>
             </div>
 
-            <p className="mt-4 text-center text-xs leading-5 text-[#13293D]/65">
+            <p className="mt-3 text-center text-[11px] leading-5 text-[#13293D]/65 md:mt-4 md:text-xs">
               Exercices personnels de rescoring sonore. Les images et marques
               appartiennent à leurs ayants droit respectifs ; ces projets ne
               sont pas affiliés aux marques présentées.
@@ -678,8 +678,8 @@ function App() {
           title="À propos"
           subtitle="Compositeur et univers personnel"
         >
-          <div className="grid gap-8 md:grid-cols-[minmax(0,1.2fr)_minmax(220px,0.8fr)]">
-            <div className="space-y-5 rounded-lg bg-white/35  text-[#13293D] backdrop-blur-[1px]">
+          <div className="grid gap-5 md:grid-cols-[minmax(0,1.2fr)_minmax(220px,0.8fr)] md:gap-8">
+            <div className="space-y-4 rounded-lg bg-white/35 text-[#13293D] backdrop-blur-[1px] md:space-y-5">
               <p>
                 Compositeur et créateur sonore basé à Paris, je compose des
                 musiques pensées pour l’image, avec une approche centrée sur
@@ -704,7 +704,7 @@ function App() {
               </p>
             </div>
 
-            <div className="grid gap-3 text-sm text-[#13293D]">
+            <div className="grid gap-2 text-sm text-[#13293D] sm:grid-cols-2 md:grid-cols-1 md:gap-3">
               {[
                 ["Approche", "Émotion, rythme, narration"],
                 ["Formats", "Jeu vidéo, cinéma, publicité"],
@@ -716,7 +716,7 @@ function App() {
                   ref={(element) => {
                     aboutCardsRef.current[index] = element;
                   }}
-                  className="rounded-lg border-l-4 border-[#F4E4BA] bg-white/70 p-4 shadow-sm ring-1 ring-black/10 backdrop-blur-sm"
+                  className="rounded-lg border-l-4 border-[#F4E4BA] bg-white/70 p-3 shadow-sm ring-1 ring-black/10 backdrop-blur-sm md:p-4"
                 >
                   <p className="text-xs uppercase tracking-[0.2em] text-[#13293D]/60">
                     {label}
@@ -738,8 +738,8 @@ function App() {
           title="Contact"
           subtitle="On travaille ensemble ?"
         >
-          <div className="grid items-center gap-8 md:grid-cols-[minmax(0,1.1fr)_minmax(240px,0.9fr)]">
-            <div className="space-y-5 rounded-lg bg-white/35  text-[#13293D] backdrop-blur-[1px]">
+          <div className="grid items-center gap-5 md:grid-cols-[minmax(0,1.1fr)_minmax(240px,0.9fr)] md:gap-8">
+            <div className="space-y-4 rounded-lg bg-white/35 text-[#13293D] backdrop-blur-[1px] md:space-y-5">
               <p>
                 Vous préparez un jeu, un film, une bande-annonce ou une campagne
                 ? Je suis disponible pour échanger autour de votre projet,
@@ -760,7 +760,7 @@ function App() {
               </a>
             </div>
 
-            <div className="grid gap-3 text-sm text-[#13293D]">
+            <div className="grid gap-2 text-sm text-[#13293D] sm:grid-cols-2 md:grid-cols-1 md:gap-3">
               {[
                 ["Email", "contact@vincentgelee.com"],
                 ["Disponibilité", "Collaborations et commandes"],
@@ -769,7 +769,7 @@ function App() {
               ].map(([label, value]) => (
                 <div
                   key={label}
-                  className="rounded-lg border-l-4 border-[#A26769] bg-white/70 p-4 shadow-sm ring-1 ring-black/10 backdrop-blur-sm"
+                  className="rounded-lg border-l-4 border-[#A26769] bg-white/70 p-3 shadow-sm ring-1 ring-black/10 backdrop-blur-sm md:p-4"
                 >
                   <p className="text-xs uppercase tracking-[0.2em] text-[#13293D]/60">
                     {label}
@@ -795,7 +795,7 @@ function App() {
         >
           <div
             ref={projectModalPanelRef}
-            className="fixed grid grid-rows-[1fr_auto] overflow-hidden rounded-lg bg-white shadow-2xl ring-1 ring-black/10 md:grid-cols-[minmax(0,1.4fr)_minmax(280px,0.6fr)] md:grid-rows-1"
+            className="fixed grid grid-rows-[minmax(0,0.95fr)_auto] overflow-hidden rounded-lg bg-white shadow-2xl ring-1 ring-black/10 md:grid-cols-[minmax(0,1.4fr)_minmax(280px,0.6fr)] md:grid-rows-1"
             onClick={(event) => event.stopPropagation()}
           >
             <div className="flex min-h-0 items-center justify-center bg-zinc-950">
@@ -808,18 +808,18 @@ function App() {
               />
             </div>
 
-            <aside className="flex flex-col justify-between gap-10 p-6 text-[#13293D] md:p-10">
+            <aside className="flex min-h-0 flex-col justify-between gap-5 overflow-y-auto p-5 text-[#13293D] md:gap-10 md:p-10">
               <div>
                 <p className="text-sm uppercase tracking-[0.25em] text-[#13293D]/60">
                   Projet
                 </p>
                 <h2
                   id="project-modal-title"
-                  className="mt-3 text-3xl font-semibold"
+                  className="mt-3 text-2xl font-semibold md:text-3xl"
                 >
                   {selectedProject.title}
                 </h2>
-                <div className="mt-7 max-w-prose space-y-4 text-base leading-8 text-[#13293D]/80">
+                <div className="mt-5 max-w-prose space-y-3 text-sm leading-7 text-[#13293D]/80 md:mt-7 md:space-y-4 md:text-base md:leading-8">
                   {selectedProject.description.map((paragraph) => (
                     <p key={paragraph}>{paragraph}</p>
                   ))}
@@ -837,7 +837,7 @@ function App() {
               </div>
             </aside>
 
-            <p className="pointer-events-none absolute bottom-4 left-4 max-w-xs text-left text-xs leading-5 text-white/70 mix-blend-difference">
+            <p className="pointer-events-none absolute bottom-4 left-4 hidden max-w-xs text-left text-xs leading-5 text-white/70 mix-blend-difference md:block">
               Exercice personnel de rescoring sonore. Images et marques :
               ayants droit respectifs.
             </p>

@@ -47,16 +47,20 @@ function HomeHero({ arrowDots, theme, animatedColorsRef }) {
     function moveCard(shouldStick) {
       if (!anchorRef.current || !cardRef.current) return;
 
+      gsap.set(cardRef.current, { width: "auto" });
       const anchorRect = anchorRef.current.getBoundingClientRect();
       const cardRect = cardRef.current.getBoundingClientRect();
+      const edgeOffset = window.innerWidth < 768 ? 16 : 24;
+      const topOffset = window.innerWidth < 768 ? 18 : 24;
+      const stuckScale = window.innerWidth < 768 ? 0.94 : 0.98;
 
       if (shouldStick) {
         gsap.to(cardRef.current, {
-          top: 24,
-          left: window.innerWidth - cardRect.width - 24,
+          top: topOffset,
+          left: window.innerWidth - cardRect.width - edgeOffset,
           xPercent: 0,
           yPercent: 0,
-          scale: 0.98,
+          scale: stuckScale,
           duration: 0.7,
           ease: "power3.out",
           overwrite: true,
@@ -78,8 +82,10 @@ function HomeHero({ arrowDots, theme, animatedColorsRef }) {
 
     function syncPosition() {
       if (!anchorRef.current || !cardRef.current) return;
+
       const rect = anchorRef.current.getBoundingClientRect();
       const shouldStick = rect.top <= 6;
+      gsap.set(cardRef.current, { width: "auto" });
 
       if (isInitialRender && !shouldStick) {
         gsap.set(cardRef.current, {
@@ -183,12 +189,11 @@ function HomeHero({ arrowDots, theme, animatedColorsRef }) {
     <>
       <div ref={anchorRef} className="relative">
         <div
-          className="invisible pointer-events-none select-none rounded-3xl border-l-4 px-6 py-5 text-right shadow-lg ring-1 ring-black/5 backdrop-blur-sm"
+          className="invisible pointer-events-none select-none px-0 py-0 text-right"
           aria-hidden="true"
-          style={{ borderLeftColor: baseRgba }}
         >
           <h1
-            className={`inline-block rounded-lg px-4 py-2 text-2xl font-medium leading-none`}
+            className={`inline-block rounded-lg px-3 py-2 text-xl font-medium leading-none md:px-4 md:text-2xl`}
             style={{
               backgroundColor: baseRgba,
               color: titleTextColor,
@@ -196,7 +201,7 @@ function HomeHero({ arrowDots, theme, animatedColorsRef }) {
           >
             Vincent Gelée
           </h1>
-          <span className="mt-0.5 mr-1 text-sm leading-none text-[#13293D]">
+          <span className="mt-1 mr-1 block text-xs leading-none text-[#13293D] md:mt-0.5 md:text-sm">
             Compositeur
           </span>
         </div>
@@ -204,11 +209,11 @@ function HomeHero({ arrowDots, theme, animatedColorsRef }) {
 
       <div
         ref={cardRef}
-        className="fixed z-40 rounded-3xl border-l-4 px-6 py-5 text-right shadow-lg ring-1 ring-black/5 backdrop-blur-sm transition-colors duration-700"
-        style={{ top: 0, left: 0, borderLeftColor: baseRgba }}
+        className="fixed z-40 px-0 py-0 text-right transition-colors duration-700"
+        style={{ top: 0, left: 0 }}
       >
         <h1
-          className={`inline-block rounded-lg px-4 py-2 text-2xl font-medium leading-none`}
+          className={`inline-block rounded-lg px-3 py-2 text-xl font-medium leading-none md:px-4 md:text-2xl`}
           style={{
             backgroundColor: baseRgba,
             color: titleTextColor,
@@ -217,7 +222,7 @@ function HomeHero({ arrowDots, theme, animatedColorsRef }) {
           Vincent Gelée
         </h1>
         <span
-          className={`mt-0.5 mr-1 block text-sm leading-none ${theme?.slug}-text`}
+          className={`mt-1 mr-1 block text-xs leading-none md:mt-0.5 md:text-sm ${theme?.slug}-text`}
         >
           Compositeur
         </span>
@@ -246,7 +251,7 @@ function HomeHero({ arrowDots, theme, animatedColorsRef }) {
 
       <svg
         ref={arrowRef}
-        className="absolute bottom-8 left-1/2 h-36 w-28 -translate-x-1/2"
+        className="absolute bottom-24 left-1/2 h-28 w-24 -translate-x-1/2 md:bottom-8 md:h-36 md:w-28"
         viewBox="0 0 120 140"
         aria-hidden="true"
       >

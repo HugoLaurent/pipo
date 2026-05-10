@@ -14,25 +14,25 @@ function ContentSection({
       id={id}
       ref={sectionRef}
       data-theme-key={dataThemeKey}
-      className="snap-section h-dvh"
+      className="snap-section min-h-dvh md:h-dvh"
       style={{ backgroundColor: "transparent" }}
     >
-      <div className="flex h-full w-full items-center justify-center px-4 py-24 md:pl-32 md:pr-8 lg:pl-40 lg:pr-10">
+      <div className="flex min-h-dvh w-full items-center justify-center px-2 pb-28 pt-12 md:h-full md:min-h-0 md:px-4 md:py-24 md:pl-32 md:pr-8 lg:pl-40 lg:pr-10">
         <div className={`${contentClassName} max-h-full overflow-visible`}>
           <p
-            className="text-sm uppercase tracking-[0.25em]"
+            className="text-xs uppercase tracking-[0.22em] md:text-sm md:tracking-[0.25em]"
             style={{ color: "#13293D" }}
           >
             {title}
           </p>
           <h2
-            className="mt-3 text-3xl font-semibold"
+            className="mt-3 text-2xl font-semibold leading-tight md:text-3xl"
             style={{ color: "#13293D" }}
           >
             {subtitle}
           </h2>
           <div
-            className="mt-4 text-base leading-7"
+            className="mt-4 text-sm leading-7 md:text-base"
             style={{ color: "#13293D" }}
           >
             {children}

@@ -6,7 +6,10 @@ function SocialFooter({ theme }) {
   ];
 
   return (
-    <footer className="fixed bottom-6 right-6 z-30" aria-label="Social links">
+    <footer
+      className="fixed bottom-6 right-6 z-30 hidden md:block"
+      aria-label="Social links"
+    >
       <ul className="m-0 flex list-none items-center gap-3 p-0">
         {items.map((item) => (
           <li key={item.label}>

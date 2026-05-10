@@ -24,6 +24,18 @@ body {
   scroll-snap-stop: always;
 }
 
+@media (max-width: 767px) {
+  html,
+  body {
+    scroll-snap-type: none;
+  }
+
+  .snap-section {
+    scroll-snap-align: none;
+    scroll-snap-stop: normal;
+  }
+}
+
 /* Theme color utility classes */
 /* Home (Deep Space Blue) */
 .home-title-bg {
