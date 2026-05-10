@@ -1,5 +1,9 @@
 @import "tailwindcss";
 
+:root {
+  --app-height: 100vh;
+}
+
 @font-face {
   font-family: "Faculty Glyphic";
   src: url("/src/assets/FacultyGlyphic-Regular.ttf") format("truetype");

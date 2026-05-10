@@ -80,14 +80,14 @@ function HomeHero({ arrowDots, theme, animatedColorsRef }) {
       });
     }
 
-    function syncPosition() {
+    function syncPosition(instant = false) {
       if (!anchorRef.current || !cardRef.current) return;
 
       const rect = anchorRef.current.getBoundingClientRect();
       const shouldStick = rect.top <= 6;
       gsap.set(cardRef.current, { width: "auto" });
 
-      if (isInitialRender && !shouldStick) {
+      if ((instant || isInitialRender) && !shouldStick) {
         gsap.set(cardRef.current, {
           top: rect.top + rect.height / 2,
           left: rect.left + rect.width / 2,
@@ -104,20 +104,27 @@ function HomeHero({ arrowDots, theme, animatedColorsRef }) {
       moveCard(shouldStick);
     }
 
-    syncPosition();
-
     let frame = 0;
-    const onScroll = () => {
+
+    function requestSync(instant = false) {
       cancelAnimationFrame(frame);
-      frame = requestAnimationFrame(syncPosition);
-    };
+      frame = requestAnimationFrame(() => syncPosition(instant));
+    }
+
+    syncPosition(true);
+    requestSync(true);
+
+    const onScroll = () => requestSync();
+    const onAppHeightChange = () => requestSync(true);
 
     window.addEventListener("scroll", onScroll, { passive: true });
     window.addEventListener("resize", onScroll);
+    window.addEventListener("app-height-change", onAppHeightChange);
     return () => {
       cancelAnimationFrame(frame);
       window.removeEventListener("scroll", onScroll);
       window.removeEventListener("resize", onScroll);
+      window.removeEventListener("app-height-change", onAppHeightChange);
     };
   }, []);
 

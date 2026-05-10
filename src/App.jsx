@@ -177,6 +177,7 @@ function App() {
         "--app-height",
         `${window.innerHeight}px`,
       );
+      window.dispatchEvent(new Event("app-height-change"));
     }
 
     function handleResize() {
