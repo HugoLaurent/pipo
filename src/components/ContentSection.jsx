@@ -12,10 +12,10 @@ function ContentSection({
       id={id}
       ref={sectionRef}
       data-theme-key={dataThemeKey}
-      className="snap-section min-h-dvh md:h-dvh"
+      className="snap-section min-h-[var(--app-height)] md:h-dvh"
       style={{ backgroundColor: "transparent", minHeight: "var(--app-height)" }}
     >
-      <div className="flex min-h-dvh w-full items-center justify-center px-2 pb-28 pt-24 md:h-full md:min-h-0 md:px-4 md:py-24 md:pl-32 md:pr-8 lg:pl-40 lg:pr-10">
+      <div className="flex min-h-[var(--app-height)] w-full items-center justify-center px-2 pb-28 pt-24 md:h-full md:min-h-0 md:px-4 md:py-24 md:pl-32 md:pr-8 lg:pl-40 lg:pr-10">
         <div className={`${contentClassName} max-h-full overflow-visible`}>
           <p
             className="text-xs uppercase tracking-[0.22em] md:text-sm md:tracking-[0.25em]"

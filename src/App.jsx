@@ -169,7 +169,7 @@ function interpolateRgb(from, to, progress) {
 }
 
 function App() {
-  useEffect(() => {
+  useLayoutEffect(() => {
     let lastWidth = window.innerWidth;
 
     function setAppHeight() {
@@ -605,7 +605,7 @@ function App() {
             sectionRefs.current.home = element;
           }}
           data-theme-key="home"
-          className="snap-section relative flex h-dvh items-center justify-center"
+          className="snap-section relative flex h-[var(--app-height)] items-center justify-center md:h-dvh"
           style={{ minHeight: "var(--app-height)" }}
         >
           <HomeHero
