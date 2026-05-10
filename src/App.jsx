@@ -169,10 +169,9 @@ function interpolateRgb(from, to, progress) {
 }
 
 function App() {
-  // Ensure a stable viewport-based height on mobile to avoid jumps when
-  // browser chrome (address bar) shows/hides. We set a CSS variable
-  // `--app-height` to window.innerHeight and update it on resize/orientation.
   useEffect(() => {
+    let lastWidth = window.innerWidth;
+
     function setAppHeight() {
       document.documentElement.style.setProperty(
         "--app-height",
@@ -180,14 +179,24 @@ function App() {
       );
     }
 
+    function handleResize() {
+      const nextWidth = window.innerWidth;
+      const isMobile = nextWidth < 768;
+
+      if (!isMobile || nextWidth !== lastWidth) {
+        lastWidth = nextWidth;
+        setAppHeight();
+      }
+    }
+
     setAppHeight();
-    window.addEventListener("resize", setAppHeight, { passive: true });
+    window.addEventListener("resize", handleResize, { passive: true });
     window.addEventListener("orientationchange", setAppHeight, {
       passive: true,
     });
 
     return () => {
-      window.removeEventListener("resize", setAppHeight);
+      window.removeEventListener("resize", handleResize);
       window.removeEventListener("orientationchange", setAppHeight);
     };
   }, []);

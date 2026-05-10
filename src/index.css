@@ -11,7 +11,7 @@
 html,
 body {
   scroll-behavior: smooth;
-  scroll-snap-type: y proximity;
+  scroll-snap-type: none;
 }
 
 /* Improve mobile scrolling performance */
@@ -27,19 +27,18 @@ body {
 }
 
 .snap-section {
-  scroll-snap-align: start;
+  scroll-snap-align: none;
   scroll-snap-stop: normal;
 }
 
-@media (max-width: 767px) {
-
+@media (min-width: 768px) {
   html,
   body {
-    scroll-snap-type: none;
+    scroll-snap-type: y proximity;
   }
 
   .snap-section {
-    scroll-snap-align: none;
+    scroll-snap-align: start;
     scroll-snap-stop: normal;
   }
 }
