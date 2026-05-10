@@ -749,7 +749,7 @@ function App() {
           subtitle="Compositeur et univers personnel"
         >
           <div className="grid gap-5 md:grid-cols-[minmax(0,1.2fr)_minmax(220px,0.8fr)] md:gap-8">
-            <div className="space-y-4 rounded-lg bg-white/35 text-[#13293D] backdrop-blur-[1px] md:space-y-5">
+            <div className="space-y-4 rounded-lg bg-white/35 text-[#13293D]  md:space-y-5">
               <p>
                 Compositeur et créateur sonore basé à Paris, je compose des
                 musiques pensées pour l’image, avec une approche centrée sur
@@ -809,7 +809,7 @@ function App() {
           subtitle="On travaille ensemble ?"
         >
           <div className="grid items-center gap-5 md:grid-cols-[minmax(0,1.1fr)_minmax(240px,0.9fr)] md:gap-8">
-            <div className="space-y-4 rounded-lg bg-white/35 text-[#13293D] backdrop-blur-[1px] md:space-y-5">
+            <div className="space-y-4 rounded-lg bg-white/35 text-[#13293D]  md:space-y-5">
               <p>
                 Vous préparez un jeu, un film, une bande-annonce ou une campagne
                 ? Je suis disponible pour échanger autour de votre projet,
