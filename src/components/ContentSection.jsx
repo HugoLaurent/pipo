@@ -7,13 +7,6 @@ function ContentSection({
   dataThemeKey,
   contentClassName = "max-w-xl",
 }) {
-  const themeColors = {
-    home: "#13293D",
-    projets: "#95B8D1",
-    apropos: "#F4E4BA",
-    contact: "#A26769",
-  };
-  const borderColor = themeColors[dataThemeKey] || "#13293D";
   return (
     <section
       id={id}
@@ -22,7 +15,7 @@ function ContentSection({
       className="snap-section min-h-dvh md:h-dvh"
       style={{ backgroundColor: "transparent", minHeight: "var(--app-height)" }}
     >
-      <div className="flex min-h-dvh w-full items-center justify-center px-2 pb-28 pt-12 md:h-full md:min-h-0 md:px-4 md:py-24 md:pl-32 md:pr-8 lg:pl-40 lg:pr-10">
+      <div className="flex min-h-dvh w-full items-center justify-center px-2 pb-28 pt-24 md:h-full md:min-h-0 md:px-4 md:py-24 md:pl-32 md:pr-8 lg:pl-40 lg:pr-10">
         <div className={`${contentClassName} max-h-full overflow-visible`}>
           <p
             className="text-xs uppercase tracking-[0.22em] md:text-sm md:tracking-[0.25em]"
@@ -31,8 +24,8 @@ function ContentSection({
             {title}
           </p>
           <h2
-            className="mt-3 border-b-2 pb-3 text-2xl font-semibold leading-tight md:text-3xl"
-            style={{ color: "#13293D", borderBottomColor: borderColor }}
+            className="mt-3 text-2xl font-semibold leading-tight md:text-3xl"
+            style={{ color: "#13293D" }}
           >
             {subtitle}
           </h2>

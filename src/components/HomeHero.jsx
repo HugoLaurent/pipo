@@ -185,47 +185,57 @@ function HomeHero({ arrowDots, theme, animatedColorsRef }) {
     };
   }, []);
 
+  const titleShellClassName =
+    "rounded-lg border-l-4 bg-white px-3 py-2 text-right shadow-lg transition-colors duration-700 md:px-4 md:py-3";
+  const titleContentClassName = "whitespace-nowrap px-0 py-0 text-right";
+  const titleShellStyle = {
+    borderLeftColor: baseRgba,
+  };
+  const titleHeadingStyle = {
+    backgroundColor: baseRgba,
+    color: titleTextColor,
+  };
+
   return (
     <>
       <div ref={anchorRef} className="relative">
         <div
-          className="invisible pointer-events-none select-none px-0 py-0 text-right"
+          className={`invisible pointer-events-none select-none ${titleShellClassName}`}
+          style={titleShellStyle}
           aria-hidden="true"
         >
-          <h1
-            className={`inline-block rounded-lg px-3 py-2 text-xl font-medium leading-none md:px-4 md:text-2xl`}
-            style={{
-              backgroundColor: baseRgba,
-              color: titleTextColor,
-            }}
-          >
-            Vincent Gelée
-          </h1>
-          <span className="mt-1 mr-1 block text-xs leading-none text-[#13293D] md:mt-0.5 md:text-sm">
-            Compositeur
-          </span>
+          <div className={titleContentClassName}>
+            <h1
+              className="inline-block rounded-lg px-3 py-2 text-xl font-medium leading-none md:px-4 md:text-2xl"
+              style={titleHeadingStyle}
+            >
+              Vincent Gelée
+            </h1>
+            <span className="mt-1 mr-1 block text-xs leading-none text-[#13293D] md:mt-0.5 md:text-sm">
+              Compositeur
+            </span>
+          </div>
         </div>
       </div>
 
       <div
         ref={cardRef}
-        className="fixed z-40 px-0 py-0 text-right transition-colors duration-700"
-        style={{ top: 0, left: 0 }}
+        className={`fixed z-40 ${titleShellClassName}`}
+        style={{ top: 0, left: 0, ...titleShellStyle }}
       >
-        <h1
-          className={`inline-block rounded-lg px-3 py-2 text-xl font-medium leading-none md:px-4 md:text-2xl`}
-          style={{
-            backgroundColor: baseRgba,
-            color: titleTextColor,
-          }}
-        >
-          Vincent Gelée
-        </h1>
-        <span
-          className={`mt-1 mr-1 block text-xs leading-none md:mt-0.5 md:text-sm ${theme?.slug}-text`}
-        >
-          Compositeur
-        </span>
+        <div className={titleContentClassName}>
+          <h1
+            className="inline-block rounded-lg px-3 py-2 text-xl font-medium leading-none md:px-4 md:text-2xl"
+            style={titleHeadingStyle}
+          >
+            Vincent Gelée
+          </h1>
+          <span
+            className={`mt-1 mr-1 block text-xs leading-none md:mt-0.5 md:text-sm ${theme?.slug}-text`}
+          >
+            Compositeur
+          </span>
+        </div>
       </div>
 
       <div className="absolute left-1/2 top-[calc(50%+92px)] -translate-x-1/2">

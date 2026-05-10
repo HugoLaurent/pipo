@@ -896,7 +896,11 @@ function App() {
                 </div>
               </div>
 
-              <div className="flex justify-end border-t border-[#13293D]/10 pt-5">
+              <div className="flex flex-col gap-4 border-t border-[#13293D]/10 pt-5 md:items-end">
+                <p className="text-[11px] leading-5 text-[#13293D]/65 md:hidden">
+                  Exercice personnel de rescoring sonore. Images et marques :
+                  ayants droit respectifs.
+                </p>
                 <button
                   type="button"
                   className="self-start rounded-md bg-[#13293D] px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-[#A26769] md:self-auto"
@@ -907,7 +911,7 @@ function App() {
               </div>
             </aside>
 
-            <p className="pointer-events-none absolute bottom-4 left-4 max-w-xs text-left text-xs leading-5 text-[#13293D]/70 md:block">
+            <p className="pointer-events-none absolute bottom-4 left-4 hidden max-w-xs text-left text-xs leading-5 text-[#13293D]/70 md:block">
               Exercice personnel de rescoring sonore. Images et marques : ayants
               droit respectifs.
             </p>

@@ -31,11 +31,8 @@ function DotPattern({
   const animationRef = useRef();
   const startTimeRef = useRef(Date.now());
   const [scrollProgress, setScrollProgress] = useState(0);
-  const isMobileRef = useRef(
-    typeof window !== "undefined" ? window.innerWidth < 768 : false,
-  );
-  const visualIntensityRef = useRef(isMobileRef.current ? 0.2 : 1);
-  const opacityMultiplierRef = useRef(isMobileRef.current ? 0.5 : 1);
+  const visualIntensityRef = useRef(0.6);
+  const opacityMultiplierRef = useRef(1);
 
   const baseRgb = useMemo(() => hexToRgb(baseColor), [baseColor]);
   const glowRgb = useMemo(() => hexToRgb(glowColor), [glowColor]);
@@ -87,9 +84,7 @@ function DotPattern({
     if (!canvas || !container) return;
 
     const rect = container.getBoundingClientRect();
-    // reduce devicePixelRatio on mobile to avoid expensive high-res canvas
-    const rawDpr = window.devicePixelRatio || 1;
-    const dpr = isMobileRef.current ? Math.min(1, rawDpr) : rawDpr;
+    const dpr = window.devicePixelRatio || 1;
 
     canvas.width = Math.max(1, Math.floor(rect.width * dpr));
     canvas.height = Math.max(1, Math.floor(rect.height * dpr));
@@ -126,7 +121,8 @@ function DotPattern({
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
-    const dpr = window.devicePixelRatio || 1;
+    const dpr =
+      canvas.width / Math.max(1, canvas.getBoundingClientRect().width);
     ctx.clearRect(0, 0, canvas.width / dpr, canvas.height / dpr);
 
     const { x: mx, y: my } = mouseRef.current;
@@ -231,13 +227,14 @@ function DotPattern({
       const radius = (dotSize / 2) * scale;
       const finalOpacity = Math.max(0.08, opacity * baseReveal);
 
-      // Reduce color saturation and opacity on mobile for sparse effect
+      // Subtly blend dot color toward near-white.
       const vi = visualIntensityRef.current;
       const gray = 240;
       r = Math.round(r * vi + gray * (1 - vi));
       g = Math.round(g * vi + gray * (1 - vi));
       b = Math.round(b * vi + gray * (1 - vi));
-      const finalOpacityWithMultiplier = finalOpacity * opacityMultiplierRef.current;
+      const finalOpacityWithMultiplier =
+        finalOpacity * opacityMultiplierRef.current;
 
       // Draw glow
       if (glow > 0) {
@@ -267,19 +264,14 @@ function DotPattern({
         ctx.fill();
       }
 
-      // Draw dot
+      // Draw dot (use adjusted opacity)
       ctx.beginPath();
       ctx.arc(dot.x, dot.y, radius, 0, Math.PI * 2);
       ctx.fillStyle = `rgba(${r}, ${g}, ${b}, ${finalOpacityWithMultiplier})`;
       ctx.fill();
     }
 
-    // schedule next frame only when not on mobile to save CPU
-    if (!isMobileRef.current) {
-      animationRef.current = requestAnimationFrame(draw);
-    } else {
-      animationRef.current = null;
-    }
+    animationRef.current = requestAnimationFrame(draw);
   }, [
     proximity,
     baseRgb,
@@ -303,32 +295,10 @@ function DotPattern({
   }, [buildGrid]);
 
   useEffect(() => {
-    // re-evaluate mobile flag on mount and on resize; update visual intensity/opacity
-    function updateIsMobile() {
-      const isMobile = window.innerWidth < 768;
-      isMobileRef.current = isMobile;
-      visualIntensityRef.current = isMobile ? 0.2 : 1;
-      opacityMultiplierRef.current = isMobile ? 0.5 : 1;
-    }
-
-    updateIsMobile();
-    window.addEventListener("resize", updateIsMobile, { passive: true });
-    window.addEventListener("orientationchange", updateIsMobile, {
-      passive: true,
-    });
-
-    // Start animation loop only for non-mobile. For mobile, draw one frame for a static background.
-    if (!isMobileRef.current) {
-      animationRef.current = requestAnimationFrame(draw);
-    } else {
-      // draw a single frame to render background without continuous rAF
-      draw();
-    }
+    animationRef.current = requestAnimationFrame(draw);
 
     return () => {
       if (animationRef.current) cancelAnimationFrame(animationRef.current);
-      window.removeEventListener("resize", updateIsMobile);
-      window.removeEventListener("orientationchange", updateIsMobile);
     };
   }, [draw]);
 
@@ -341,8 +311,7 @@ function DotPattern({
       setScrollProgress(nextProgress);
     }
 
-    // Only attach mouse listeners on non-mobile to avoid extra work
-    function handleMouseMove(e) {
+    function handlePointerMove(e) {
       const canvas = canvasRef.current;
       if (!canvas) return;
       const rect = canvas.getBoundingClientRect();
@@ -352,22 +321,26 @@ function DotPattern({
       };
     }
 
-    function handleMouseLeave() {
+    function handlePointerLeave() {
       mouseRef.current = { x: -1000, y: -1000 };
     }
 
-    if (container && !isMobileRef.current) {
-      container.addEventListener("mousemove", handleMouseMove);
-      container.addEventListener("mouseleave", handleMouseLeave);
+    if (container) {
+      container.addEventListener("pointermove", handlePointerMove, {
+        passive: true,
+      });
+      container.addEventListener("pointerleave", handlePointerLeave);
+      container.addEventListener("pointercancel", handlePointerLeave);
     }
 
     window.addEventListener("scroll", handleScroll, { passive: true });
     handleScroll();
 
     return () => {
-      if (container && !isMobileRef.current) {
-        container.removeEventListener("mousemove", handleMouseMove);
-        container.removeEventListener("mouseleave", handleMouseLeave);
+      if (container) {
+        container.removeEventListener("pointermove", handlePointerMove);
+        container.removeEventListener("pointerleave", handlePointerLeave);
+        container.removeEventListener("pointercancel", handlePointerLeave);
       }
       window.removeEventListener("scroll", handleScroll);
     };
@@ -379,14 +352,6 @@ function DotPattern({
       className={`relative min-h-screen overflow-hidden bg-white ${className || ""}`}
     >
       <canvas ref={canvasRef} className="fixed inset-0 h-full w-full" />
-
-      {/* Subtle white veil to reveal dots on white sections */}
-      <div
-        className="pointer-events-none fixed inset-0"
-        style={{
-          background: "rgba(255, 255, 255, 0.15)",
-        }}
-      />
 
       {/* Vignette overlay */}
       <div
