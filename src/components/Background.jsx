@@ -31,7 +31,9 @@ function DotPattern({
   const animationRef = useRef();
   const startTimeRef = useRef(Date.now());
   const [scrollProgress, setScrollProgress] = useState(0);
-  const isMobileRef = useRef(typeof window !== "undefined" ? window.innerWidth < 768 : false);
+  const isMobileRef = useRef(
+    typeof window !== "undefined" ? window.innerWidth < 768 : false,
+  );
 
   const baseRgb = useMemo(() => hexToRgb(baseColor), [baseColor]);
   const glowRgb = useMemo(() => hexToRgb(glowColor), [glowColor]);
@@ -298,7 +300,9 @@ function DotPattern({
 
     updateIsMobile();
     window.addEventListener("resize", updateIsMobile, { passive: true });
-    window.addEventListener("orientationchange", updateIsMobile, { passive: true });
+    window.addEventListener("orientationchange", updateIsMobile, {
+      passive: true,
+    });
 
     // Start animation loop only for non-mobile. For mobile, draw one frame for a static background.
     if (!isMobileRef.current) {

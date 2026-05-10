@@ -15,7 +15,8 @@ body {
 }
 
 /* Improve mobile scrolling performance */
-html, body {
+html,
+body {
   touch-action: pan-y;
   -webkit-overflow-scrolling: touch;
 }
@@ -31,6 +32,7 @@ body {
 }
 
 @media (max-width: 767px) {
+
   html,
   body {
     scroll-snap-type: none;
@@ -183,6 +185,7 @@ body {
 
 /* Disable expensive backdrop blur and heavy shadows on small screens */
 @media (max-width: 767px) {
+
   .backdrop-blur-sm,
   .backdrop-blur-[1px],
   .backdrop-blur-md {
