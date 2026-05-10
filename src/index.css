@@ -11,7 +11,7 @@
 html,
 body {
   scroll-behavior: smooth;
-  scroll-snap-type: y mandatory;
+  scroll-snap-type: y proximity;
 }
 
 /* Improve mobile scrolling performance */
@@ -28,7 +28,7 @@ body {
 
 .snap-section {
   scroll-snap-align: start;
-  scroll-snap-stop: always;
+  scroll-snap-stop: normal;
 }
 
 @media (max-width: 767px) {

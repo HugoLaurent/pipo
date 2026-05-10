@@ -457,9 +457,6 @@ function App() {
 
   useEffect(() => {
     let frame = 0;
-    let snapTimer = 0;
-    let releaseSnapTimer = 0;
-    let isSnapping = false;
 
     function computeSections() {
       const sections = Object.entries(sectionRefs.current)
@@ -550,37 +547,9 @@ function App() {
       }
     }
 
-    function snapToClosestSection() {
-      if (isSnapping) return;
-
-      const { closestSection } = getClosestFromCache();
-      if (!closestSection) return;
-
-      const distanceToSection = Math.abs(
-        window.scrollY - closestSection.element.offsetTop,
-      );
-      if (distanceToSection < 4) return;
-
-      isSnapping = true;
-      closestSection.element.scrollIntoView({
-        behavior: "smooth",
-        block: "start",
-      });
-
-      clearTimeout(releaseSnapTimer);
-      releaseSnapTimer = setTimeout(() => {
-        isSnapping = false;
-      }, 700);
-    }
-
     function requestUpdate() {
       cancelAnimationFrame(frame);
       frame = requestAnimationFrame(updateActiveTheme);
-
-      if (!isSnapping && window.innerWidth >= 768) {
-        clearTimeout(snapTimer);
-        snapTimer = setTimeout(snapToClosestSection, 140);
-      }
     }
 
     // compute initial cache and wire listeners
@@ -598,8 +567,6 @@ function App() {
 
     return () => {
       cancelAnimationFrame(frame);
-      clearTimeout(snapTimer);
-      clearTimeout(releaseSnapTimer);
       window.removeEventListener("scroll", requestUpdate);
       window.removeEventListener("resize", onResize);
       window.removeEventListener("orientationchange", onResize);
