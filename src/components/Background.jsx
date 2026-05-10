@@ -34,6 +34,8 @@ function DotPattern({
   const isMobileRef = useRef(
     typeof window !== "undefined" ? window.innerWidth < 768 : false,
   );
+  const visualIntensityRef = useRef(isMobileRef.current ? 0.18 : 0.6);
+  const opacityMultiplierRef = useRef(isMobileRef.current ? 0.6 : 1);
 
   const baseRgb = useMemo(() => hexToRgb(baseColor), [baseColor]);
   const glowRgb = useMemo(() => hexToRgb(glowColor), [glowColor]);
@@ -229,6 +231,14 @@ function DotPattern({
       const radius = (dotSize / 2) * scale;
       const finalOpacity = Math.max(0.08, opacity * baseReveal);
 
+      // Subtly blend dot color toward near-white and reduce opacity on small screens
+      const vi = visualIntensityRef.current;
+      const gray = 240;
+      r = Math.round(r * vi + gray * (1 - vi));
+      g = Math.round(g * vi + gray * (1 - vi));
+      b = Math.round(b * vi + gray * (1 - vi));
+      const finalOpacityWithMultiplier = finalOpacity * opacityMultiplierRef.current;
+
       // Draw glow
       if (glow > 0) {
         const gradient = ctx.createRadialGradient(
@@ -257,10 +267,10 @@ function DotPattern({
         ctx.fill();
       }
 
-      // Draw dot
+      // Draw dot (use adjusted opacity)
       ctx.beginPath();
       ctx.arc(dot.x, dot.y, radius, 0, Math.PI * 2);
-      ctx.fillStyle = `rgba(${r}, ${g}, ${b}, ${finalOpacity})`;
+      ctx.fillStyle = `rgba(${r}, ${g}, ${b}, ${finalOpacityWithMultiplier})`;
       ctx.fill();
     }
 
@@ -293,9 +303,12 @@ function DotPattern({
   }, [buildGrid]);
 
   useEffect(() => {
-    // re-evaluate mobile flag on mount and on resize
+    // re-evaluate mobile flag on mount and on resize; adjust visual intensity/opactiy
     function updateIsMobile() {
-      isMobileRef.current = window.innerWidth < 768;
+      const isMobile = window.innerWidth < 768;
+      isMobileRef.current = isMobile;
+      visualIntensityRef.current = isMobile ? 0.18 : 0.6;
+      opacityMultiplierRef.current = isMobile ? 0.6 : 1;
     }
 
     updateIsMobile();

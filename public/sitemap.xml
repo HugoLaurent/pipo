@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <!-- Replace / with your full site domain if possible (https://example.com/) -->
+  <url>
+    <loc>/</loc>
+    <priority>1.00</priority>
+  </url>
+  <url>
+    <loc>/#projets</loc>
+    <priority>0.80</priority>
+  </url>
+  <url>
+    <loc>/#apropos</loc>
+    <priority>0.80</priority>
+  </url>
+  <url>
+    <loc>/#contact</loc>
+    <priority>0.80</priority>
+  </url>
+</urlset>
