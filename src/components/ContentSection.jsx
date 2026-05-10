@@ -7,6 +7,13 @@ function ContentSection({
   dataThemeKey,
   contentClassName = "max-w-xl",
 }) {
+  const themeColors = {
+    home: "#13293D",
+    projets: "#95B8D1",
+    apropos: "#F4E4BA",
+    contact: "#A26769",
+  };
+  const borderColor = themeColors[dataThemeKey] || "#13293D";
   return (
     <section
       id={id}
@@ -24,8 +31,8 @@ function ContentSection({
             {title}
           </p>
           <h2
-            className="mt-3 text-2xl font-semibold leading-tight md:text-3xl"
-            style={{ color: "#13293D" }}
+            className="mt-3 border-b-2 pb-3 text-2xl font-semibold leading-tight md:text-3xl"
+            style={{ color: "#13293D", borderBottomColor: borderColor }}
           >
             {subtitle}
           </h2>
