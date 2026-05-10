@@ -169,6 +169,29 @@ function interpolateRgb(from, to, progress) {
 }
 
 function App() {
+  // Ensure a stable viewport-based height on mobile to avoid jumps when
+  // browser chrome (address bar) shows/hides. We set a CSS variable
+  // `--app-height` to window.innerHeight and update it on resize/orientation.
+  useEffect(() => {
+    function setAppHeight() {
+      document.documentElement.style.setProperty(
+        "--app-height",
+        `${window.innerHeight}px`,
+      );
+    }
+
+    setAppHeight();
+    window.addEventListener("resize", setAppHeight, { passive: true });
+    window.addEventListener("orientationchange", setAppHeight, {
+      passive: true,
+    });
+
+    return () => {
+      window.removeEventListener("resize", setAppHeight);
+      window.removeEventListener("orientationchange", setAppHeight);
+    };
+  }, []);
+
   const arrowDots = [
     { x: 50, y: 52, r: 3 },
     { x: 60, y: 52, r: 3 },
@@ -208,12 +231,41 @@ function App() {
   });
 
   const activeTheme = THEMES[activeThemeKey];
-  const projectsPerPage = 3;
+  const [projectsPerPage, setProjectsPerPage] = useState(() =>
+    typeof window !== "undefined" && window.innerWidth < 768 ? 2 : 3,
+  );
+
+  useEffect(() => {
+    function updateProjectsPerPage() {
+      const value = window.innerWidth < 768 ? 2 : 3;
+      setProjectsPerPage(value);
+    }
+
+    updateProjectsPerPage();
+    window.addEventListener("resize", updateProjectsPerPage, { passive: true });
+    window.addEventListener("orientationchange", updateProjectsPerPage, {
+      passive: true,
+    });
+
+    return () => {
+      window.removeEventListener("resize", updateProjectsPerPage);
+      window.removeEventListener("orientationchange", updateProjectsPerPage);
+    };
+  }, []);
+
   const projectsPageCount = Math.ceil(PROJECTS.length / projectsPerPage);
   const visibleProjects = PROJECTS.slice(
     projectsPage * projectsPerPage,
     projectsPage * projectsPerPage + projectsPerPage,
   );
+
+  useEffect(() => {
+    const maxPage = Math.max(
+      0,
+      Math.ceil(PROJECTS.length / projectsPerPage) - 1,
+    );
+    setProjectsPage((current) => Math.min(current, maxPage));
+  }, [projectsPerPage]);
 
   const themeVars = useMemo(
     () => ({
@@ -557,6 +609,7 @@ function App() {
           }}
           data-theme-key="home"
           className="snap-section relative flex h-dvh items-center justify-center"
+          style={{ minHeight: "var(--app-height)" }}
         >
           <HomeHero
             arrowDots={arrowDots}
@@ -586,7 +639,9 @@ function App() {
                   type="button"
                   className="grid overflow-hidden rounded-lg bg-white/90 text-left shadow-sm ring-1 ring-black/10 backdrop-blur-sm transition-colors hover:bg-white focus:outline-none focus:ring-2 focus:ring-[#13293D] sm:grid-cols-[minmax(120px,0.9fr)_minmax(0,1.1fr)] md:block"
                   onMouseEnter={(event) => liftProjectCard(event.currentTarget)}
-                  onMouseLeave={(event) => resetProjectCard(event.currentTarget)}
+                  onMouseLeave={(event) =>
+                    resetProjectCard(event.currentTarget)
+                  }
                   onFocus={(event) => liftProjectCard(event.currentTarget)}
                   onBlur={(event) => resetProjectCard(event.currentTarget)}
                   onClick={(event) =>
@@ -837,9 +892,9 @@ function App() {
               </div>
             </aside>
 
-            <p className="pointer-events-none absolute bottom-4 left-4 hidden max-w-xs text-left text-xs leading-5 text-white/70 mix-blend-difference md:block">
-              Exercice personnel de rescoring sonore. Images et marques :
-              ayants droit respectifs.
+            <p className="pointer-events-none absolute bottom-4 left-4 max-w-xs text-left text-xs leading-5 text-[#13293D]/70 md:block">
+              Exercice personnel de rescoring sonore. Images et marques : ayants
+              droit respectifs.
             </p>
           </div>
         </div>
