@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef } from "react";
 
 function hexToRgb(hex) {
   const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
@@ -30,7 +30,8 @@ function DotPattern({
   const mouseRef = useRef({ x: -1000, y: -1000 });
   const animationRef = useRef();
   const startTimeRef = useRef(Date.now());
-  const [scrollProgress, setScrollProgress] = useState(0);
+  const scrollProgressRef = useRef(0);
+  const canvasDprRef = useRef(1);
   const visualIntensityRef = useRef(0.6);
   const opacityMultiplierRef = useRef(1);
 
@@ -84,7 +85,9 @@ function DotPattern({
     if (!canvas || !container) return;
 
     const rect = container.getBoundingClientRect();
-    const dpr = window.devicePixelRatio || 1;
+    const rawDpr = window.devicePixelRatio || 1;
+    const dpr = window.innerWidth < 768 ? Math.min(rawDpr, 1.5) : rawDpr;
+    canvasDprRef.current = dpr;
 
     canvas.width = Math.max(1, Math.floor(rect.width * dpr));
     canvas.height = Math.max(1, Math.floor(rect.height * dpr));
@@ -121,8 +124,7 @@ function DotPattern({
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
-    const dpr =
-      canvas.width / Math.max(1, canvas.getBoundingClientRect().width);
+    const dpr = canvasDprRef.current || 1;
     ctx.clearRect(0, 0, canvas.width / dpr, canvas.height / dpr);
 
     const { x: mx, y: my } = mouseRef.current;
@@ -196,7 +198,7 @@ function DotPattern({
       let b = currentBaseRef.current.b;
       let glow = 0;
       const arrowMask = getArrowMask(dot, width, height);
-      const reveal = Math.min(1, 0.35 + scrollProgress * 0.65);
+      const reveal = Math.min(1, 0.35 + scrollProgressRef.current * 0.65);
       const baseReveal = Math.max(arrowMask, reveal);
 
       // Mouse proximity effect
@@ -279,7 +281,6 @@ function DotPattern({
     dotSize,
     glowIntensity,
     waveSpeed,
-    scrollProgress,
     getArrowMask,
   ]);
 
@@ -307,11 +308,12 @@ function DotPattern({
 
     function handleScroll() {
       const maxScroll = Math.max(1, window.innerHeight * 0.9);
-      const nextProgress = Math.min(1, window.scrollY / maxScroll);
-      setScrollProgress(nextProgress);
+      scrollProgressRef.current = Math.min(1, window.scrollY / maxScroll);
     }
 
     function handlePointerMove(e) {
+      if (window.innerWidth < 768 && e.pointerType !== "mouse") return;
+
       const canvas = canvasRef.current;
       if (!canvas) return;
       const rect = canvas.getBoundingClientRect();

@@ -216,6 +216,7 @@ function App() {
   const sectionRefs = useRef({});
   const sectionsPositionsRef = useRef([]);
   const [activeThemeKey, setActiveThemeKey] = useState("home");
+  const activeThemeKeyRef = useRef("home");
   const [projectsPage, setProjectsPage] = useState(0);
   const [selectedProject, setSelectedProject] = useState(null);
   const [projectModalOrigin, setProjectModalOrigin] = useState(null);
@@ -235,6 +236,10 @@ function App() {
   const [projectsPerPage, setProjectsPerPage] = useState(() =>
     typeof window !== "undefined" && window.innerWidth < 768 ? 2 : 3,
   );
+
+  useEffect(() => {
+    activeThemeKeyRef.current = activeThemeKey;
+  }, [activeThemeKey]);
 
   useEffect(() => {
     function updateProjectsPerPage() {
@@ -539,9 +544,10 @@ function App() {
         );
       }
 
-      setActiveThemeKey((currentKey) =>
-        closestKey !== currentKey ? closestKey : currentKey,
-      );
+      if (closestKey !== activeThemeKeyRef.current) {
+        activeThemeKeyRef.current = closestKey;
+        setActiveThemeKey(closestKey);
+      }
     }
 
     function snapToClosestSection() {
