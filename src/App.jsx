@@ -79,17 +79,65 @@ const THEMES = {
 };
 
 const PROJECTS = [
-  { title: "Pub Dior", videoUrl: pubDiorVideo },
-  { title: "Pub Nike", videoUrl: pubNikeVideo, previewTime: 10 },
-  { title: "Pub Mercedes", videoUrl: pubMercedesVideo },
-  { title: "Gris B", videoUrl: grisBVideo, previewTime: 39 },
-  { title: "Pub iPhone 16", videoUrl: pubIphoneVideo, previewTime: 10.5 },
-  { title: "Pub Rolls Royce", videoUrl: pubRollsRoyceVideo, previewTime: 2 },
-].map((project) => ({
-  ...project,
-  description:
-    "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer vitae sem vel neque posuere luctus.",
-}));
+  {
+    title: "Gris — Jeu vidéo",
+    videoUrl: grisBVideo,
+    previewTime: 39,
+    description: [
+      "Approche poétique et atmosphérique.",
+      "J’ai principalement utilisé des instruments issus du classique, en cherchant à construire une progression rythmique sombre et émotionnelle.",
+      "Ajout d’effets sonores naturels comme l’eau, le vent ou la roche, mêlés à des textures plus synthétiques afin d’accentuer le côté angoissant et mystérieux.",
+    ],
+  },
+  {
+    title: "Publicité Mercedes",
+    videoUrl: pubMercedesVideo,
+    description: [
+      "Ma première création sonore.",
+      "J’ai choisi de mettre en avant la modernité de la marque plutôt que son héritage.",
+      "Une introduction magnétique et envoûtante évolue progressivement vers une esthétique Trap plus énergique.",
+    ],
+  },
+  {
+    title: "Publicité Rolls-Royce",
+    videoUrl: pubRollsRoyceVideo,
+    previewTime: 2,
+    description: [
+      "Pour souligner l’élégance et le luxe de la marque, j’ai commencé de manière minimaliste avec un piano accompagné d’un pad ambient.",
+      "L’idée était de préserver l’émotion portée par l’image.",
+      "Lorsque le rythme s’accélère, la composition évolue vers des percussions plus marquées, dans une direction Hip-Hop / Trap.",
+    ],
+  },
+  {
+    title: "Publicité iPhone 16",
+    videoUrl: pubIphoneVideo,
+    previewTime: 10.5,
+    description: [
+      "Des images en mouvement constant, du rythme et de l’énergie : la Drum and Bass s’est imposée naturellement pour accompagner cette dynamique visuelle.",
+      "J’ai néanmoins varié certaines sections musicales afin d’éviter la redondance.",
+      "L’objectif était aussi de renforcer l’impact commercial de la publicité.",
+    ],
+  },
+  {
+    title: "Publicité Dior",
+    videoUrl: pubDiorVideo,
+    description: [
+      "S’attaquer à une publicité portée par Rihanna représentait un vrai défi.",
+      "J’ai choisi une approche douce et minimaliste, en accompagnant la préparation de l’artiste avant son entrée en lumière.",
+      "La composition évolue ensuite vers une ambiance Pop acoustique plus émotionnelle, jusqu’au célèbre “Dior J’adore”.",
+    ],
+  },
+  {
+    title: "Publicité Nike",
+    videoUrl: pubNikeVideo,
+    previewTime: 10,
+    description: [
+      "Composition inspirée de la Drill : rapide, nerveuse et énergique.",
+      "Après une courte respiration lors de l’apparition de Ronaldinho, la production repart avec encore plus d’intensité percussive.",
+      "Le tout se termine sur un “tic-tac” stressant avant le penalty final.",
+    ],
+  },
+];
 
 function hexToRgbTriplet(hex) {
   const value = hex.replace("#", "");
@@ -224,6 +272,27 @@ function App() {
       },
     });
   }, [projectModalOrigin]);
+
+  const liftProjectCard = useCallback((element) => {
+    gsap.to(element, {
+      y: -5,
+      boxShadow: "0 14px 28px rgba(19, 41, 61, 0.16)",
+      duration: 0.24,
+      ease: "power2.out",
+      overwrite: true,
+    });
+  }, []);
+
+  const resetProjectCard = useCallback((element) => {
+    gsap.to(element, {
+      y: 0,
+      boxShadow: "0 1px 2px rgba(0, 0, 0, 0.05)",
+      duration: 0.24,
+      ease: "power2.out",
+      overwrite: true,
+      clearProps: "transform,boxShadow",
+    });
+  }, []);
 
   useLayoutEffect(() => {
     const cards = projectCardsRef.current
@@ -516,6 +585,10 @@ function App() {
                   }}
                   type="button"
                   className="overflow-hidden rounded-lg bg-white/90 text-left shadow-sm ring-1 ring-black/10 backdrop-blur-sm transition-colors hover:bg-white focus:outline-none focus:ring-2 focus:ring-[#13293D]"
+                  onMouseEnter={(event) => liftProjectCard(event.currentTarget)}
+                  onMouseLeave={(event) => resetProjectCard(event.currentTarget)}
+                  onFocus={(event) => liftProjectCard(event.currentTarget)}
+                  onBlur={(event) => resetProjectCard(event.currentTarget)}
                   onClick={(event) =>
                     openProjectModal(project, event.currentTarget)
                   }
@@ -535,8 +608,8 @@ function App() {
                     <h3 className="text-base font-semibold leading-tight text-[#13293D]">
                       {project.title}
                     </h3>
-                    <p className="mt-2 text-sm leading-6 text-[#13293D]/80">
-                      {project.description}
+                    <p className="mt-2 line-clamp-2 text-sm leading-6 text-[#13293D]/80">
+                      {project.description.join(" ")}
                     </p>
                   </div>
                 </button>
@@ -735,7 +808,7 @@ function App() {
               />
             </div>
 
-            <aside className="flex flex-col justify-between gap-8 p-6 text-[#13293D] md:p-8">
+            <aside className="flex flex-col justify-between gap-10 p-6 text-[#13293D] md:p-10">
               <div>
                 <p className="text-sm uppercase tracking-[0.25em] text-[#13293D]/60">
                   Projet
@@ -746,16 +819,14 @@ function App() {
                 >
                   {selectedProject.title}
                 </h2>
-                <p className="mt-5 text-base leading-7 text-[#13293D]/80">
-                  {selectedProject.description}
-                </p>
+                <div className="mt-7 max-w-prose space-y-4 text-base leading-8 text-[#13293D]/80">
+                  {selectedProject.description.map((paragraph) => (
+                    <p key={paragraph}>{paragraph}</p>
+                  ))}
+                </div>
               </div>
 
-              <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
-                <p className="max-w-xs text-xs leading-5 text-[#13293D]/60">
-                  Exercice personnel de rescoring sonore. Images et marques :
-                  ayants droit respectifs.
-                </p>
+              <div className="flex justify-end border-t border-[#13293D]/10 pt-5">
                 <button
                   type="button"
                   className="self-start rounded-md bg-[#13293D] px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-[#A26769] md:self-auto"
@@ -765,6 +836,11 @@ function App() {
                 </button>
               </div>
             </aside>
+
+            <p className="pointer-events-none absolute bottom-4 left-4 max-w-xs text-left text-xs leading-5 text-white/70 mix-blend-difference">
+              Exercice personnel de rescoring sonore. Images et marques :
+              ayants droit respectifs.
+            </p>
           </div>
         </div>
       )}
