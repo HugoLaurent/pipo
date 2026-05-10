@@ -237,7 +237,8 @@ function DotPattern({
       r = Math.round(r * vi + gray * (1 - vi));
       g = Math.round(g * vi + gray * (1 - vi));
       b = Math.round(b * vi + gray * (1 - vi));
-      const finalOpacityWithMultiplier = finalOpacity * opacityMultiplierRef.current;
+      const finalOpacityWithMultiplier =
+        finalOpacity * opacityMultiplierRef.current;
 
       // Draw glow
       if (glow > 0) {
