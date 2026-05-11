@@ -21,4 +21,4 @@ jobs:
             git pull origin main
             npm ci
             npm run build
-            rsync -av --delete --exclude 'videos/' dist/ /var/www/vincent_portfolio/
+            rsync -av --delete --exclude 'media/' --exclude 'videos/' dist/ /var/www/vincent_portfolio/
