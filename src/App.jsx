@@ -806,7 +806,7 @@ function App() {
               </p>
 
               <a
-                href="mailto:contact@vincentgelee.com"
+                href="mailto:vgelee@gmail.com"
                 className="inline-flex rounded-md bg-[#13293D] px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-[#A26769]"
               >
                 Écrire un message
@@ -815,7 +815,7 @@ function App() {
 
             <div className="grid gap-2 text-sm text-[#13293D] sm:grid-cols-2 md:grid-cols-1 md:gap-3">
               {[
-                ["Email", "contact@vincentgelee.com"],
+                ["Email", "vgelee@gmail.com"],
                 ["Disponibilité", "Collaborations et commandes"],
                 ["Formats", "Jeu vidéo, cinéma, publicité"],
                 ["Basé à", "Paris"],
