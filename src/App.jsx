@@ -3,12 +3,12 @@ import ContentSection from "./components/ContentSection";
 import HomeHero from "./components/HomeHero";
 import SiteNav from "./components/SiteNav";
 import SocialFooter from "./components/SocialFooter";
-import grisBVideo from "./assets/videos/Gris B.mov";
-import pubDiorVideo from "./assets/videos/Pub Dior.mp4";
-import pubIphoneVideo from "./assets/videos/Pub Iphone 16.mp4";
-import pubMercedesVideo from "./assets/videos/Pub-Mercedes-Vincent.mp4";
-import pubNikeVideo from "./assets/videos/Pub Nike 142Bpm Drill and bass.mp4";
-import pubRollsRoyceVideo from "./assets/videos/Pub Rolls Royce.mp4";
+const grisBVideo = "/videos/gris-b.mov";
+const pubDiorVideo = "/videos/pub-dior.mp4";
+const pubIphoneVideo = "/videos/pub-iphone-16.mp4";
+const pubMercedesVideo = "/videos/pub-mercedes-vincent.mp4";
+const pubNikeVideo = "/videos/pub-nike.mp4";
+const pubRollsRoyceVideo = "/videos/pub-rolls-royce.mp4";
 import {
   useCallback,
   useEffect,
