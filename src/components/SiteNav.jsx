@@ -16,7 +16,7 @@ function getReadableTextColor({ r, g, b }) {
   return luminance > 0.55 ? "#13293D" : "#ffffff";
 }
 
-function SiteNav({ theme, activeThemeKey, animatedColorsRef }) {
+function SiteNav({ theme, activeThemeKey, animatedColorsRef, onNavigate }) {
   const [activeBg, setActiveBg] = useState(theme?.buttonBg);
   const [activeText, setActiveText] = useState(
     getReadableTextColor(hexToRgbObject(theme?.buttonBg || "#13293D")),
@@ -51,16 +51,17 @@ function SiteNav({ theme, activeThemeKey, animatedColorsRef }) {
   }, [animatedColorsRef, theme]);
 
   const links = [
-    { href: "#accueil", label: "Accueil", themeKey: "home" },
-    { href: "#projets", label: "Projets", themeKey: "projets" },
-    { href: "#apropos", label: "À propos", themeKey: "apropos" },
-    { href: "#contact", label: "Contact", themeKey: "contact" },
+    { href: "/", target: "#accueil", label: "Accueil", themeKey: "home" },
+    { href: "/projets/", target: "#projets", label: "Projets", themeKey: "projets" },
+    { href: "/a-propos/", target: "#apropos", label: "À propos", themeKey: "apropos" },
+    { href: "/contact/", target: "#contact", label: "Contact", themeKey: "contact" },
   ];
 
-  function scrollToSection(event, href) {
+  function scrollToSection(event, link) {
     event.preventDefault();
+    onNavigate?.(link.href);
 
-    const target = document.querySelector(href);
+    const target = document.querySelector(link.target);
     if (!target) return;
 
     const startY = window.scrollY;
@@ -100,7 +101,7 @@ function SiteNav({ theme, activeThemeKey, animatedColorsRef }) {
             <li key={link.href} className="min-w-0 flex-1 md:flex-none">
               <a
                 href={link.href}
-                onClick={(event) => scrollToSection(event, link.href)}
+                onClick={(event) => scrollToSection(event, link)}
                 className={`block truncate rounded-md px-2 py-2 text-center text-[11px] leading-none no-underline transition-colors duration-300 md:inline-block md:px-2.5 md:py-1.5 md:text-left md:text-base md:leading-normal ${activeClass} ${textClass}`}
                 style={
                   isActive

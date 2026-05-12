@@ -3,12 +3,12 @@ import ContentSection from "./components/ContentSection";
 import HomeHero from "./components/HomeHero";
 import SiteNav from "./components/SiteNav";
 import SocialFooter from "./components/SocialFooter";
-const grisBVideo = "/media/videos/gris-b.mov";
-const pubDiorVideo = "/media/videos/pub-dior.mp4";
-const pubIphoneVideo = "/media/videos/pub-iphone-16.mp4";
-const pubMercedesVideo = "/media/videos/pub-mercedes-vincent.mp4";
-const pubNikeVideo = "/media/videos/pub-nike.mp4";
-const pubRollsRoyceVideo = "/media/videos/pub-rolls-royce.mp4";
+import { PROJECTS, getProjectBySlug, getProjectPath } from "./data/projects";
+import {
+  getAbsoluteUrl,
+  getSeoPageByPath,
+  normalizePath,
+} from "./data/seo";
 import {
   useCallback,
   useEffect,
@@ -78,66 +78,44 @@ const THEMES = {
   },
 };
 
-const PROJECTS = [
-  {
-    title: "Gris — Jeu vidéo",
-    videoUrl: grisBVideo,
-    previewTime: 39,
-    description: [
-      "Approche poétique et atmosphérique.",
-      "J’ai principalement utilisé des instruments issus du classique, en cherchant à construire une progression rythmique sombre et émotionnelle.",
-      "Ajout d’effets sonores naturels comme l’eau, le vent ou la roche, mêlés à des textures plus synthétiques afin d’accentuer le côté angoissant et mystérieux.",
-    ],
-  },
-  {
-    title: "Publicité Mercedes",
-    videoUrl: pubMercedesVideo,
-    description: [
-      "Ma première création sonore.",
-      "J’ai choisi de mettre en avant la modernité de la marque plutôt que son héritage.",
-      "Une introduction magnétique et envoûtante évolue progressivement vers une esthétique Trap plus énergique.",
-    ],
-  },
-  {
-    title: "Publicité Rolls-Royce",
-    videoUrl: pubRollsRoyceVideo,
-    previewTime: 2,
-    description: [
-      "Pour souligner l’élégance et le luxe de la marque, j’ai commencé de manière minimaliste avec un piano accompagné d’un pad ambient.",
-      "L’idée était de préserver l’émotion portée par l’image.",
-      "Lorsque le rythme s’accélère, la composition évolue vers des percussions plus marquées, dans une direction Hip-Hop / Trap.",
-    ],
-  },
-  {
-    title: "Publicité iPhone 16",
-    videoUrl: pubIphoneVideo,
-    previewTime: 10.5,
-    description: [
-      "Des images en mouvement constant, du rythme et de l’énergie : la Drum and Bass s’est imposée naturellement pour accompagner cette dynamique visuelle.",
-      "J’ai néanmoins varié certaines sections musicales afin d’éviter la redondance.",
-      "L’objectif était aussi de renforcer l’impact commercial de la publicité.",
-    ],
-  },
-  {
-    title: "Publicité Dior",
-    videoUrl: pubDiorVideo,
-    description: [
-      "S’attaquer à une publicité portée par Rihanna représentait un vrai défi.",
-      "J’ai choisi une approche douce et minimaliste, en accompagnant la préparation de l’artiste avant son entrée en lumière.",
-      "La composition évolue ensuite vers une ambiance Pop acoustique plus émotionnelle, jusqu’au célèbre “Dior J’adore”.",
-    ],
-  },
-  {
-    title: "Publicité Nike",
-    videoUrl: pubNikeVideo,
-    previewTime: 10,
-    description: [
-      "Composition inspirée de la Drill : rapide, nerveuse et énergique.",
-      "Après une courte respiration lors de l’apparition de Ronaldinho, la production repart avec encore plus d’intensité percussive.",
-      "Le tout se termine sur un “tic-tac” stressant avant le penalty final.",
-    ],
-  },
-];
+const SECTION_PATHS = {
+  home: "/",
+  projets: "/projets/",
+  apropos: "/a-propos/",
+  contact: "/contact/",
+};
+
+function getRouteState(pathname) {
+  const path = normalizePath(pathname);
+  const projectMatch = path.match(/^\/projets\/([^/]+)\/$/);
+
+  if (projectMatch) {
+    const project = getProjectBySlug(projectMatch[1]);
+    if (project) {
+      return {
+        path,
+        sectionKey: "projets",
+        project,
+        projectIndex: PROJECTS.findIndex((item) => item.slug === project.slug),
+      };
+    }
+  }
+
+  const page = getSeoPageByPath(path);
+  return {
+    path,
+    sectionKey: page.sectionKey,
+    project: null,
+    projectIndex: -1,
+  };
+}
+
+function updateMetaTag(selector, attribute, value) {
+  const element = document.head.querySelector(selector);
+  if (element) {
+    element.setAttribute(attribute, value);
+  }
+}
 
 function hexToRgbTriplet(hex) {
   const value = hex.replace("#", "");
@@ -169,6 +147,10 @@ function interpolateRgb(from, to, progress) {
 }
 
 function App() {
+  const [currentPath, setCurrentPath] = useState(() =>
+    normalizePath(window.location.pathname),
+  );
+
   useLayoutEffect(() => {
     let lastWidth = window.innerWidth;
 
@@ -247,6 +229,47 @@ function App() {
     typeof window !== "undefined" && window.innerWidth < 768 ? 2 : 3,
   );
 
+  const navigateToPath = useCallback((path) => {
+    const nextPath = normalizePath(path);
+    if (normalizePath(window.location.pathname) !== nextPath) {
+      window.history.pushState({}, "", nextPath);
+    }
+    setCurrentPath(nextPath);
+  }, []);
+
+  useEffect(() => {
+    function handlePopState() {
+      setCurrentPath(normalizePath(window.location.pathname));
+    }
+
+    window.addEventListener("popstate", handlePopState);
+    return () => {
+      window.removeEventListener("popstate", handlePopState);
+    };
+  }, []);
+
+  useEffect(() => {
+    const page = getSeoPageByPath(currentPath);
+    const canonicalUrl = getAbsoluteUrl(page.path);
+
+    document.title = page.title;
+    updateMetaTag('meta[name="description"]', "content", page.description);
+    updateMetaTag('link[rel="canonical"]', "href", canonicalUrl);
+    updateMetaTag('meta[property="og:title"]', "content", page.title);
+    updateMetaTag(
+      'meta[property="og:description"]',
+      "content",
+      page.description,
+    );
+    updateMetaTag('meta[property="og:url"]', "content", canonicalUrl);
+    updateMetaTag('meta[name="twitter:title"]', "content", page.title);
+    updateMetaTag(
+      'meta[name="twitter:description"]',
+      "content",
+      page.description,
+    );
+  }, [currentPath]);
+
   useEffect(() => {
     activeThemeKeyRef.current = activeThemeKey;
   }, [activeThemeKey]);
@@ -269,15 +292,64 @@ function App() {
     };
   }, []);
 
+  const currentRoute = useMemo(() => getRouteState(currentPath), [currentPath]);
   const projectsPageCount = Math.ceil(PROJECTS.length / projectsPerPage);
+  const routeProjectsPage =
+    currentRoute.projectIndex >= 0
+      ? Math.floor(currentRoute.projectIndex / projectsPerPage)
+      : null;
   const activeProjectsPage = Math.min(
-    projectsPage,
+    routeProjectsPage ?? projectsPage,
     Math.max(0, projectsPageCount - 1),
   );
   const visibleProjects = PROJECTS.slice(
     activeProjectsPage * projectsPerPage,
     activeProjectsPage * projectsPerPage + projectsPerPage,
   );
+
+  useEffect(() => {
+    const targetSection = sectionRefs.current[currentRoute.sectionKey];
+    const scrollFrame = requestAnimationFrame(() => {
+      targetSection?.scrollIntoView({ block: "start", behavior: "smooth" });
+    });
+
+    if (currentRoute.project) {
+      if (selectedProject?.slug !== currentRoute.project.slug) {
+        const modalFrame = requestAnimationFrame(() => {
+          setProjectModalOrigin({
+            top: Math.max(24, window.innerHeight / 2 - 90),
+            left: Math.max(16, window.innerWidth / 2 - 160),
+            width: Math.min(320, window.innerWidth - 32),
+            height: 180,
+          });
+          setSelectedProject(currentRoute.project);
+        });
+        return () => {
+          cancelAnimationFrame(scrollFrame);
+          cancelAnimationFrame(modalFrame);
+        };
+      }
+      return () => {
+        cancelAnimationFrame(scrollFrame);
+      };
+    }
+
+    if (selectedProject) {
+      const closeFrame = requestAnimationFrame(() => {
+        setSelectedProject(null);
+        setProjectModalOrigin(null);
+        isProjectModalClosingRef.current = false;
+      });
+      return () => {
+        cancelAnimationFrame(scrollFrame);
+        cancelAnimationFrame(closeFrame);
+      };
+    }
+
+    return () => {
+      cancelAnimationFrame(scrollFrame);
+    };
+  }, [currentRoute, selectedProject]);
 
   const themeVars = useMemo(
     () => ({
@@ -292,6 +364,7 @@ function App() {
   const openProjectModal = useCallback((project, element) => {
     const rect = element.getBoundingClientRect();
     isProjectModalClosingRef.current = false;
+    navigateToPath(getProjectPath(project));
     setProjectModalOrigin({
       top: rect.top,
       left: rect.left,
@@ -299,7 +372,7 @@ function App() {
       height: rect.height,
     });
     setSelectedProject(project);
-  }, []);
+  }, [navigateToPath]);
 
   const closeProjectModal = useCallback(() => {
     if (isProjectModalClosingRef.current) return;
@@ -311,6 +384,7 @@ function App() {
     if (!overlay || !panel || !projectModalOrigin) {
       setSelectedProject(null);
       setProjectModalOrigin(null);
+      navigateToPath(SECTION_PATHS.projets);
       return;
     }
 
@@ -333,9 +407,10 @@ function App() {
         setSelectedProject(null);
         setProjectModalOrigin(null);
         isProjectModalClosingRef.current = false;
+        navigateToPath(SECTION_PATHS.projets);
       },
     });
-  }, [projectModalOrigin]);
+  }, [navigateToPath, projectModalOrigin]);
 
   const liftProjectCard = useCallback((element) => {
     gsap.to(element, {
@@ -594,6 +669,7 @@ function App() {
           theme={activeTheme}
           activeThemeKey={activeThemeKey}
           animatedColorsRef={animatedColorsRef}
+          onNavigate={navigateToPath}
         />
 
         <section
@@ -625,23 +701,24 @@ function App() {
           <div>
             <div className="grid grid-cols-1 gap-3 md:grid-cols-3 md:gap-5">
               {visibleProjects.map((project, index) => (
-                <button
+                <a
                   key={project.title}
+                  href={getProjectPath(project)}
                   ref={(element) => {
                     projectCardsRef.current[index] = element;
                   }}
-                  type="button"
                   aria-label={`Voir le détail du projet ${project.title}`}
-                  className="grid overflow-hidden rounded-lg bg-white/90 text-left shadow-sm ring-1 ring-black/10 backdrop-blur-sm transition-colors hover:bg-white focus:outline-none focus:ring-2 focus:ring-[#13293D] sm:grid-cols-[minmax(120px,0.9fr)_minmax(0,1.1fr)] md:block"
+                  className="grid overflow-hidden rounded-lg bg-white/90 text-left no-underline shadow-sm ring-1 ring-black/10 backdrop-blur-sm transition-colors hover:bg-white focus:outline-none focus:ring-2 focus:ring-[#13293D] sm:grid-cols-[minmax(120px,0.9fr)_minmax(0,1.1fr)] md:block"
                   onMouseEnter={(event) => liftProjectCard(event.currentTarget)}
                   onMouseLeave={(event) =>
                     resetProjectCard(event.currentTarget)
                   }
                   onFocus={(event) => liftProjectCard(event.currentTarget)}
                   onBlur={(event) => resetProjectCard(event.currentTarget)}
-                  onClick={(event) =>
-                    openProjectModal(project, event.currentTarget)
-                  }
+                  onClick={(event) => {
+                    event.preventDefault();
+                    openProjectModal(project, event.currentTarget);
+                  }}
                 >
                   <video
                     className="pointer-events-none aspect-video h-full w-full bg-zinc-100 object-cover"
@@ -664,9 +741,19 @@ function App() {
                       {project.description.join(" ")}
                     </p>
                   </div>
-                </button>
+                </a>
               ))}
             </div>
+
+            <nav className="sr-only" aria-label="Tous les projets">
+              <ul>
+                {PROJECTS.map((project) => (
+                  <li key={project.slug}>
+                    <a href={getProjectPath(project)}>{project.title}</a>
+                  </li>
+                ))}
+              </ul>
+            </nav>
 
             <div className="mt-4 flex items-center justify-between gap-3 md:mt-5 md:gap-4">
               <button
