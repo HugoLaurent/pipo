@@ -270,18 +270,14 @@ function App() {
   }, []);
 
   const projectsPageCount = Math.ceil(PROJECTS.length / projectsPerPage);
-  const visibleProjects = PROJECTS.slice(
-    projectsPage * projectsPerPage,
-    projectsPage * projectsPerPage + projectsPerPage,
+  const activeProjectsPage = Math.min(
+    projectsPage,
+    Math.max(0, projectsPageCount - 1),
   );
-
-  useEffect(() => {
-    const maxPage = Math.max(
-      0,
-      Math.ceil(PROJECTS.length / projectsPerPage) - 1,
-    );
-    setProjectsPage((current) => Math.min(current, maxPage));
-  }, [projectsPerPage]);
+  const visibleProjects = PROJECTS.slice(
+    activeProjectsPage * projectsPerPage,
+    activeProjectsPage * projectsPerPage + projectsPerPage,
+  );
 
   const themeVars = useMemo(
     () => ({
@@ -383,13 +379,13 @@ function App() {
     );
 
     gsap.to(dots, {
-      scale: (index) => (index === projectsPage ? 1.45 : 1),
-      opacity: (index) => (index === projectsPage ? 1 : 0.55),
+      scale: (index) => (index === activeProjectsPage ? 1.45 : 1),
+      opacity: (index) => (index === activeProjectsPage ? 1 : 0.55),
       duration: 0.28,
       ease: "power2.out",
       overwrite: true,
     });
-  }, [projectsPage, visibleProjects.length]);
+  }, [activeProjectsPage, visibleProjects.length]);
 
   useLayoutEffect(() => {
     if (activeThemeKey !== "apropos") return;
@@ -623,8 +619,8 @@ function App() {
           }}
           dataThemeKey="projets"
           contentClassName="w-full max-w-5xl"
-          title="Projets"
-          subtitle="Rescoring, sound design et musiques à l’image"
+          title="Projets de rescoring et sound design"
+          subtitle="Musiques à l’image pour jeu vidéo, publicité et formats narratifs"
         >
           <div>
             <div className="grid grid-cols-1 gap-3 md:grid-cols-3 md:gap-5">
@@ -635,6 +631,7 @@ function App() {
                     projectCardsRef.current[index] = element;
                   }}
                   type="button"
+                  aria-label={`Voir le détail du projet ${project.title}`}
                   className="grid overflow-hidden rounded-lg bg-white/90 text-left shadow-sm ring-1 ring-black/10 backdrop-blur-sm transition-colors hover:bg-white focus:outline-none focus:ring-2 focus:ring-[#13293D] sm:grid-cols-[minmax(120px,0.9fr)_minmax(0,1.1fr)] md:block"
                   onMouseEnter={(event) => liftProjectCard(event.currentTarget)}
                   onMouseLeave={(event) =>
@@ -656,6 +653,8 @@ function App() {
                     muted
                     playsInline
                     preload="metadata"
+                    aria-label={`Extrait vidéo du projet ${project.title}`}
+                    title={`Extrait vidéo du projet ${project.title}`}
                   />
                   <div className="border-l-4 border-[#95B8D1] p-3 md:p-4">
                     <h3 className="text-sm font-semibold leading-tight text-[#13293D] md:text-base">
@@ -673,7 +672,7 @@ function App() {
               <button
                 type="button"
                 className="rounded-md bg-white/90 px-3 py-2 text-xs font-medium text-[#13293D] shadow-sm ring-1 ring-black/10 transition-colors hover:bg-white disabled:cursor-not-allowed disabled:opacity-40 md:text-sm"
-                disabled={projectsPage === 0}
+                disabled={activeProjectsPage === 0}
                 onClick={() =>
                   setProjectsPage((currentPage) => Math.max(0, currentPage - 1))
                 }
@@ -690,9 +689,13 @@ function App() {
                     }}
                     type="button"
                     aria-label={`Page ${index + 1}`}
-                    aria-current={projectsPage === index ? "page" : undefined}
+                    aria-current={
+                      activeProjectsPage === index ? "page" : undefined
+                    }
                     className={`h-2.5 w-2.5 rounded-full transition-colors ${
-                      projectsPage === index ? "bg-[#13293D]" : "bg-[#95B8D1]"
+                      activeProjectsPage === index
+                        ? "bg-[#13293D]"
+                        : "bg-[#95B8D1]"
                     }`}
                     onClick={() => setProjectsPage(index)}
                   />
@@ -702,7 +705,7 @@ function App() {
               <button
                 type="button"
                 className="rounded-md bg-white/90 px-3 py-2 text-xs font-medium text-[#13293D] shadow-sm ring-1 ring-black/10 transition-colors hover:bg-white disabled:cursor-not-allowed disabled:opacity-40 md:text-sm"
-                disabled={projectsPage === projectsPageCount - 1}
+                disabled={activeProjectsPage === projectsPageCount - 1}
                 onClick={() =>
                   setProjectsPage((currentPage) =>
                     Math.min(projectsPageCount - 1, currentPage + 1),
@@ -728,8 +731,8 @@ function App() {
           }}
           dataThemeKey="apropos"
           contentClassName="w-full max-w-4xl"
-          title="À propos"
-          subtitle="Compositeur et univers personnel"
+          title="À propos de Vincent Gelée"
+          subtitle="Compositeur et créateur sonore basé à Paris"
         >
           <div className="grid gap-5 md:grid-cols-[minmax(0,1.2fr)_minmax(220px,0.8fr)] md:gap-8">
             <div className="space-y-4 rounded-lg bg-white/35 text-[#13293D]  md:space-y-5">
@@ -788,8 +791,8 @@ function App() {
           }}
           dataThemeKey="contact"
           contentClassName="w-full max-w-4xl"
-          title="Contact"
-          subtitle="On travaille ensemble ?"
+          title="Contact compositeur musique à l'image"
+          subtitle="Parler d'un projet sonore ou musical"
         >
           <div className="grid items-center gap-5 md:grid-cols-[minmax(0,1.1fr)_minmax(240px,0.9fr)] md:gap-8">
             <div className="space-y-4 rounded-lg bg-white/35 text-[#13293D]  md:space-y-5">

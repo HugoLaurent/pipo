@@ -1,0 +1,18 @@
+{
+  "name": "Vincent Gelée - Compositeur musique à l'image",
+  "short_name": "Vincent Gelée",
+  "description": "Portfolio de Vincent Gelée, compositeur de musique à l'image à Paris.",
+  "lang": "fr-FR",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#13293D",
+  "icons": [
+    {
+      "src": "/favicon.png?v=2",
+      "sizes": "32x32",
+      "type": "image/png"
+    }
+  ]
+}

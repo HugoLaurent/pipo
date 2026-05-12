@@ -29,7 +29,7 @@ function DotPattern({
   const dotsRef = useRef([]);
   const mouseRef = useRef({ x: -1000, y: -1000 });
   const animationRef = useRef();
-  const startTimeRef = useRef(Date.now());
+  const startTimeRef = useRef(0);
   const scrollProgressRef = useRef(0);
   const canvasDprRef = useRef(1);
   const visualIntensityRef = useRef(0.6);
@@ -117,7 +117,7 @@ function DotPattern({
     dotsRef.current = dots;
   }, [dotSize, gap]);
 
-  const draw = useCallback(() => {
+  const draw = useCallback(function drawFrame() {
     const canvas = canvasRef.current;
     if (!canvas) return;
 
@@ -129,6 +129,9 @@ function DotPattern({
 
     const { x: mx, y: my } = mouseRef.current;
     const proxSq = proximity * proximity;
+    if (startTimeRef.current === 0) {
+      startTimeRef.current = Date.now();
+    }
     const time = (Date.now() - startTimeRef.current) * 0.001 * waveSpeed;
     const width = canvas.width / dpr;
     const height = canvas.height / dpr;
@@ -273,14 +276,13 @@ function DotPattern({
       ctx.fill();
     }
 
-    animationRef.current = requestAnimationFrame(draw);
+    animationRef.current = requestAnimationFrame(drawFrame);
   }, [
     proximity,
-    baseRgb,
-    glowRgb,
     dotSize,
     glowIntensity,
     waveSpeed,
+    animatedColorsRef,
     getArrowMask,
   ]);
 

@@ -212,14 +212,14 @@ function HomeHero({ arrowDots, theme, animatedColorsRef }) {
           aria-hidden="true"
         >
           <div className={titleContentClassName}>
-            <h1
+            <p
               className="inline-block rounded-lg px-3 py-2 text-xl font-medium leading-none md:px-4 md:text-2xl"
               style={titleHeadingStyle}
             >
               Vincent Gelée
-            </h1>
+            </p>
             <span className="mt-1 mr-1 block text-xs leading-none text-[#13293D] md:mt-0.5 md:text-sm">
-              Compositeur
+              Compositeur musique à l'image
             </span>
           </div>
         </div>
@@ -236,11 +236,16 @@ function HomeHero({ arrowDots, theme, animatedColorsRef }) {
             style={titleHeadingStyle}
           >
             Vincent Gelée
+            <span className="sr-only">
+              {" "}
+              - compositeur de musique à l'image, sound designer et rescoring à
+              Paris
+            </span>
           </h1>
           <span
             className={`mt-1 mr-1 block text-xs leading-none md:mt-0.5 md:text-sm ${theme?.slug}-text`}
           >
-            Compositeur
+            Compositeur musique à l'image
           </span>
         </div>
       </div>
