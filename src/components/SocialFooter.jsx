@@ -1,8 +1,13 @@
 function SocialFooter({ theme }) {
   const items = [
-    { href: "#", label: "Facebook" },
-    { href: "#", label: "LinkedIn" },
-    { href: "#", label: "Instagram" },
+    {
+      href: "https://fr.linkedin.com/in/vincent-gelee-7b8bb8251",
+      label: "LinkedIn",
+    },
+    {
+      href: "https://www.instagram.com/v.i.n.i_music?igsh=MW16MjRlZnNjdjR2Nw==",
+      label: "Instagram",
+    },
   ];
 
   return (
@@ -11,6 +16,18 @@ function SocialFooter({ theme }) {
       aria-label="Social links"
     >
       <ul className="m-0 flex list-none items-center gap-3 p-0">
+        <li>
+          <a
+            href="https://hugolaurent.fr/"
+            className="inline-flex items-center justify-center rounded text-sm"
+            aria-label="Site réalisé par Hugo Laurent"
+            style={{ color: theme?.text || "#13293D" }}
+            target="_blank"
+            rel="noreferrer"
+          >
+            Site réalisé par Hugo Laurent
+          </a>
+        </li>
         {items.map((item) => (
           <li key={item.label}>
             <a
@@ -18,6 +35,8 @@ function SocialFooter({ theme }) {
               className="inline-flex items-center justify-center rounded text-sm"
               aria-label={item.label}
               style={{ color: theme?.text || "#13293D" }}
+              target="_blank"
+              rel="noreferrer"
             >
               {item.label}
             </a>
