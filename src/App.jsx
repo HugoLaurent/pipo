@@ -943,10 +943,13 @@ function App() {
             <button
               type="button"
               aria-label="Fermer le projet"
-              className="absolute right-3 top-3 z-10 flex h-9 w-9 items-center justify-center rounded-full bg-white/90 text-xl leading-none text-[#13293D] shadow-sm ring-1 ring-black/10 transition-colors hover:bg-white md:hidden"
+              className="absolute right-3 top-3 z-10 flex h-9 w-9 items-center justify-center rounded-full bg-white/90 text-[#13293D] shadow-sm ring-1 ring-black/10 transition-colors hover:bg-white md:hidden"
               onClick={closeProjectModal}
             >
-              ×
+              <span className="relative block h-4 w-4" aria-hidden="true">
+                <span className="absolute left-1/2 top-1/2 h-0.5 w-4 -translate-x-1/2 -translate-y-1/2 rotate-45 rounded-full bg-current" />
+                <span className="absolute left-1/2 top-1/2 h-0.5 w-4 -translate-x-1/2 -translate-y-1/2 -rotate-45 rounded-full bg-current" />
+              </span>
             </button>
 
             <div className="flex min-h-0 items-center justify-center bg-zinc-950">
