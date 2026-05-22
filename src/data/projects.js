@@ -13,6 +13,7 @@ export const PROJECTS = [
     title: "Shadow of the Colossus",
     shortTitle: "Shadow of the Colossus",
     videoUrl: shadowOfTheColossusVideo,
+    previewTime: 55,
     seoTitle: "Shadow of the Colossus - rework bande-annonce | Vincent Gelée",
     seoDescription:
       "Rework musical de la bande-annonce de Shadow of the Colossus par Vincent Gelée : solitude, mystère et grandeur silencieuse.",
@@ -27,6 +28,7 @@ export const PROJECTS = [
     title: "Seraphyn Design",
     shortTitle: "Seraphyn Design",
     videoUrl: seraphynDesignVideo,
+    previewTime: 3,
     seoTitle: "Seraphyn Design - musique d'exposition | Vincent Gelée",
     seoDescription:
       "Musique composée pour Seraphyn Design lors de son exposition au Grand Palais : ambiance lo-fi douce, légère et rêveuse.",

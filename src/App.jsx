@@ -4,11 +4,7 @@ import HomeHero from "./components/HomeHero";
 import SiteNav from "./components/SiteNav";
 import SocialFooter from "./components/SocialFooter";
 import { PROJECTS, getProjectBySlug, getProjectPath } from "./data/projects";
-import {
-  getAbsoluteUrl,
-  getSeoPageByPath,
-  normalizePath,
-} from "./data/seo";
+import { getAbsoluteUrl, getSeoPageByPath, normalizePath } from "./data/seo";
 import {
   useCallback,
   useEffect,
@@ -361,18 +357,21 @@ function App() {
     [activeTheme],
   );
 
-  const openProjectModal = useCallback((project, element) => {
-    const rect = element.getBoundingClientRect();
-    isProjectModalClosingRef.current = false;
-    navigateToPath(getProjectPath(project));
-    setProjectModalOrigin({
-      top: rect.top,
-      left: rect.left,
-      width: rect.width,
-      height: rect.height,
-    });
-    setSelectedProject(project);
-  }, [navigateToPath]);
+  const openProjectModal = useCallback(
+    (project, element) => {
+      const rect = element.getBoundingClientRect();
+      isProjectModalClosingRef.current = false;
+      navigateToPath(getProjectPath(project));
+      setProjectModalOrigin({
+        top: rect.top,
+        left: rect.left,
+        width: rect.width,
+        height: rect.height,
+      });
+      setSelectedProject(project);
+    },
+    [navigateToPath],
+  );
 
   const closeProjectModal = useCallback(() => {
     if (isProjectModalClosingRef.current) return;
@@ -970,7 +969,7 @@ function App() {
               </div>
 
               <div className="flex flex-col gap-4 border-t border-[#13293D]/10 pt-5 md:items-end">
-                <p className="text-[11px] leading-5 text-[#13293D]/65 md:hidden">
+                <p className="text-[11px] leading-5 text-white md:hidden">
                   Exercice personnel de rescoring sonore. Images et marques :
                   ayants droit respectifs.
                 </p>
