@@ -940,6 +940,15 @@ function App() {
             className="fixed grid grid-rows-[minmax(220px,45vh)_minmax(0,1fr)] overflow-hidden rounded-lg bg-white shadow-2xl ring-1 ring-black/10 md:grid-cols-[minmax(0,1.4fr)_minmax(280px,0.6fr)] md:grid-rows-1"
             onClick={(event) => event.stopPropagation()}
           >
+            <button
+              type="button"
+              aria-label="Fermer le projet"
+              className="absolute right-3 top-3 z-10 flex h-9 w-9 items-center justify-center rounded-full bg-white/90 text-xl leading-none text-[#13293D] shadow-sm ring-1 ring-black/10 transition-colors hover:bg-white md:hidden"
+              onClick={closeProjectModal}
+            >
+              ×
+            </button>
+
             <div className="flex min-h-0 items-center justify-center bg-zinc-950">
               <video
                 className="h-full w-full object-contain"
