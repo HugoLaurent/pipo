@@ -937,12 +937,12 @@ function App() {
         >
           <div
             ref={projectModalPanelRef}
-            className="fixed grid grid-rows-[minmax(0,0.95fr)_auto] overflow-hidden rounded-lg bg-white shadow-2xl ring-1 ring-black/10 md:grid-cols-[minmax(0,1.4fr)_minmax(280px,0.6fr)] md:grid-rows-1"
+            className="fixed grid grid-rows-[minmax(220px,45vh)_minmax(0,1fr)] overflow-hidden rounded-lg bg-white shadow-2xl ring-1 ring-black/10 md:grid-cols-[minmax(0,1.4fr)_minmax(280px,0.6fr)] md:grid-rows-1"
             onClick={(event) => event.stopPropagation()}
           >
             <div className="flex min-h-0 items-center justify-center bg-zinc-950">
               <video
-                className="max-h-full w-full object-contain"
+                className="h-full w-full object-contain"
                 src={selectedProject.videoUrl}
                 controls
                 autoPlay
@@ -983,7 +983,7 @@ function App() {
               </div>
             </aside>
 
-            <p className="pointer-events-none absolute bottom-4 left-4 hidden max-w-xs text-left text-xs leading-5 text-[#13293D]/70 md:block">
+            <p className="pointer-events-none absolute bottom-4 left-4 hidden max-w-xs text-left text-xs leading-5 text-white md:block">
               Exercice personnel de rescoring sonore. Images et marques : ayants
               droit respectifs.
             </p>
