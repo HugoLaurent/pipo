@@ -4,8 +4,38 @@ const pubIphoneVideo = "/media/videos/pub-iphone-16.mp4";
 const pubMercedesVideo = "/media/videos/pub-mercedes-vincent.mp4";
 const pubNikeVideo = "/media/videos/pub-nike.mp4";
 const pubRollsRoyceVideo = "/media/videos/pub-rolls-royce.mp4";
+const seraphynDesignVideo = "/media/videos/seraphyn-design.mp4";
+const shadowOfTheColossusVideo = "/media/videos/shadow-of-the-colossus-ba.mp4";
 
 export const PROJECTS = [
+  {
+    slug: "shadow-of-the-colossus",
+    title: "Shadow of the Colossus",
+    shortTitle: "Shadow of the Colossus",
+    videoUrl: shadowOfTheColossusVideo,
+    seoTitle: "Shadow of the Colossus - rework bande-annonce | Vincent Gelée",
+    seoDescription:
+      "Rework musical de la bande-annonce de Shadow of the Colossus par Vincent Gelée : solitude, mystère et grandeur silencieuse.",
+    description: [
+      "Rework de la bande-annonce de Shadow of the Colossus, un jeu qui m'a énormément marqué.",
+      "J'avais envie de retrouver cette sensation de solitude, de mystère et de grandeur silencieuse qui rend son univers si particulier.",
+      "Une approche volontairement sobre et émotionnelle, avec une montée progressive pensée pour rester fidèle à ce que le jeu m'a fait ressentir.",
+    ],
+  },
+  {
+    slug: "seraphyn-design",
+    title: "Seraphyn Design",
+    shortTitle: "Seraphyn Design",
+    videoUrl: seraphynDesignVideo,
+    seoTitle: "Seraphyn Design - musique d'exposition | Vincent Gelée",
+    seoDescription:
+      "Musique composée pour Seraphyn Design lors de son exposition au Grand Palais : ambiance lo-fi douce, légère et rêveuse.",
+    description: [
+      "Musique composée pour Seraphyn Design lors de son exposition au Grand Palais.",
+      "L'idée était de créer quelque chose de simple, léger et un peu rêveur, pour accompagner les images sans prendre trop de place.",
+      "Une ambiance lo-fi douce, pensée pour laisser respirer les matières, les lumières et l'univers très apaisant des créations présentées.",
+    ],
+  },
   {
     slug: "gris-jeu-video",
     title: "Gris — Jeu vidéo",
@@ -21,6 +51,7 @@ export const PROJECTS = [
       "Ajout d’effets sonores naturels comme l’eau, le vent ou la roche, mêlés à des textures plus synthétiques afin d’accentuer le côté angoissant et mystérieux.",
     ],
   },
+
   {
     slug: "publicite-mercedes",
     title: "Publicité Mercedes",
